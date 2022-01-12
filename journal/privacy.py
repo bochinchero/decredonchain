@@ -19,4 +19,6 @@ def dailyVolume():
                      hEnd=cfg.pEnd,
                      hColor=colorWindow,
                      dStart=cfg.dStart,
-                     fmt=charts.autoformatNoDec)
+                     fmtAxis=charts.autoformatNoDec,
+                     fmtAnn=charts.autoformat,
+                     ylim=[cfg.csppVolMin,cfg.csppVolMax])

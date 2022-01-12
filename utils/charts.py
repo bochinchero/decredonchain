@@ -30,7 +30,7 @@ def autoformat(x=None,dec=None,unit=None):
         elif x >= 1e3:
             return "{:,.1f}".format(x)
         else:
-            return "{:,.3f}".format(x)
+            return "{:,.2f}".format(x)
 
 def autoformatNoDec(x,pos=None):
     'The two args are the value and tick position'
@@ -39,7 +39,7 @@ def autoformatNoDec(x,pos=None):
 
 def autoformatMill(x,pos=None):
     'The two args are the value and tick position'
-    if x >= 1e6:
+    if abs(x) >= 1e6:
         return "{:,.1f}".format(x * 1e-6) + ' M'
     else:
         return "{:,.2f}".format(x)
@@ -75,7 +75,6 @@ def fig(title,ylabel,ax=None,start=None,end=None):
     ax.set_facecolor(colour_hex('dcr_grey15'))
     ax.tick_params(color=colour_hex('dcr_black'), labelcolor=colour_hex('dcr_black'))
     ax.grid(color=colour_hex('dcr_grey50'), linestyle='--', linewidth=0.5)
-    plt.tight_layout()
     return ax, fig
 
 
@@ -251,7 +250,7 @@ def saveFigure(figx, figTitle, path=None,date=None):
 
 def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
                yLabel,uLabel,hStart=None,hEnd=None,
-               hColor=None,dStart=None,fmt=None):
+               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None):
     # if there is no data start specified, used the chart start
     if dStart is None:
         dStart = cStart
@@ -261,17 +260,20 @@ def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
     if hStart is not None and hEnd is not None:
         ax.axvspan(hStart, hEnd, color=hColor, alpha=0.25)
         # annotate min and max within window
-        annotMax(data, dataCol, ax, hStart, hEnd, 'Up', unitStr=uLabel)
-        annotMin(data, dataCol, ax, hStart, hEnd, unitStr=uLabel)
+        annotMax(data, dataCol, ax, hStart, hEnd, 'Up', unitStr=uLabel,formatStr=fmtAnn)
+        annotMin(data, dataCol, ax, hStart, hEnd, unitStr=uLabel,formatStr=fmtAnn)
     # annotate previous ATH
     if hStart is None:
-        prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel)
+        prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel,formatStr=fmtAnn)
     else:
-        prevMax(data, dataCol, ax, dStart, hStart, unitStr=uLabel)
+        prevMax(data, dataCol, ax, dStart, hStart, unitStr=uLabel,formatStr=fmtAnn)
     # plot the metric
     plot_primary(data[dataCol], yLabel, 'dcr_darkblue', ax, 'linear', 1.5)
-    if fmt is not None:
-        ax.yaxis.set_major_formatter(fmt)
+    if fmtAxis is not None:
+        ax.yaxis.set_major_formatter(fmtAxis)
     # ax.set_ylim(cfg.stakeSpLimMin, cfg.stakeSpLimMax)
     ax.legend(loc='upper left')
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    plt.tight_layout()
     saveFigure(xfig,fTitle, date=hStart)

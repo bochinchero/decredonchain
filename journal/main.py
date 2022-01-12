@@ -16,6 +16,8 @@ staking.dailyTicketPoolValue()
 # network
 
 network.dailyHashrate()
+network.dailyTxTfrValAdjNtv()
+network.dailyTxTfrValAdjUSD()
 
 # privacy
 

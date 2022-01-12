@@ -32,9 +32,25 @@ stakeTpLimMax = 350
 stakeTpLimMin = 100
 
 # stake participation limits
-stakeSpLimMax = 65
+stakeSpLimMax = 70
 stakeSpLimMin = 50
 
 # pool value limits
 stakePvLimMax = 10000000
-stakePvLimMin = 6000000
+stakePvLimMin = 5000000
+
+# mining axis limits
+netHashLimMax = 700000
+netHashLimMin = 0
+
+# TxTfrValAdjNtv axis limits
+netDailyTxVolNtvMax = 1600000
+netDailyTxVolNtvMin = -200000
+
+# TxTfrValAdjNtv axis limits
+netDailyTxVolUSDMax = 300000000
+netDailyTxVolUSDMin = -100000000
+
+# cspp daily axis limits
+csppVolMax = 800000
+csppVolMin = 0

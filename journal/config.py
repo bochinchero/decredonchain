@@ -18,7 +18,7 @@ pdtd142 = pd.Timedelta(142, unit="d")
 
 # convert to pd dt
 dStart = pd.to_datetime(dt.date(int(2016),int(1),int(1)), utc=True, format=fmtt, errors='ignore')
-dStartCSPP = pd.to_datetime(dt.date(int(2019),int(8),int(1)), utc=True, format=fmtt, errors='ignore')
+dStartCSPP = pd.to_datetime(dt.date(int(2019),int(7),int(1)), utc=True, format=fmtt, errors='ignore')
 dEnd = pd.to_datetime(dt.date.today() + dt.timedelta(days=60), utc=True, format=fmtt, errors='ignore')
 pStart = pd.to_datetime(period_start, utc=True, format=fmtt, errors='ignore')
 pEnd = pd.to_datetime(period_end, utc=True, format=fmtt, errors='ignore')
@@ -54,3 +54,7 @@ netDailyTxVolUSDMin = -100000000
 # cspp daily axis limits
 csppVolMax = 800000
 csppVolMin = 0
+
+# cspp daily axis limits
+csppMVolMax = 15000000
+csppMVolMin = 0

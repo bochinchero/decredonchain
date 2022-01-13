@@ -250,7 +250,7 @@ def saveFigure(figx, figTitle, path=None,date=None):
 
 def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
                yLabel,uLabel,hStart=None,hEnd=None,
-               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None):
+               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None):
     # if there is no data start specified, used the chart start
     if dStart is None:
         dStart = cStart
@@ -277,3 +277,31 @@ def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
         ax.set_ylim(ylim)
     plt.tight_layout()
     saveFigure(xfig,fTitle, date=hStart)
+
+
+def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
+               yLabel,uLabel,hStart=None,
+               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None):
+    if dStart is None:
+        dStart = cStart
+    ax, xfig = fig(cTitle,yLabel, None, cStart, cEnd)
+    # charting
+    ax.bar(data.index, data[dataCol], color=colour_hex(bColour), width=15,
+           label=yLabel, align='center')
+    ax.yaxis.set_major_formatter(fmtAxis)
+    plt.setp(ax.xaxis.get_majorticklabels(), ha='center')
+    annotPos(data, dataCol, 2, ax, 'Up', 2, unitStr=uLabel, formatStr=fmtAnn)
+    annotPos(data, dataCol, 3, ax, 'Up', 1.5, unitStr=uLabel, formatStr=fmtAnn)
+    if hStart is None:
+        prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel, formatStr=fmtAnn)
+    else:
+        prevMax(data, dataCol, ax, dStart, hStart, unitStr=uLabel, formatStr=fmtAnn)
+    ax.legend(loc='upper left')
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    # set monthly locator
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
+    # set formatter
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    plt.tight_layout()
+    saveFigure(xfig, fTitle, date=hStart)

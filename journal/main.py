@@ -22,7 +22,7 @@ network.dailyTxTfrValAdjUSD()
 # privacy
 
 privacy.dailyVolume()
-
+privacy.monthlyVolumeDCR()
 
 # display charts
 plt.show()

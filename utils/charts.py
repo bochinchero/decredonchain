@@ -275,13 +275,15 @@ def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
     ax.legend(loc='upper left')
     if ylim is not None:
         ax.set_ylim(ylim)
+    xfig.autofmt_xdate(rotation=45)
     plt.tight_layout()
     saveFigure(xfig,fTitle, date=hStart)
 
 
 def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
                yLabel,uLabel,hStart=None,
-               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None):
+               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None,
+               annPos1 =None,annPos2=None,annPos3=None):
     if dStart is None:
         dStart = cStart
     ax, xfig = fig(cTitle,yLabel, None, cStart, cEnd)
@@ -290,8 +292,12 @@ def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
            label=yLabel, align='center')
     ax.yaxis.set_major_formatter(fmtAxis)
     plt.setp(ax.xaxis.get_majorticklabels(), ha='center')
-    annotPos(data, dataCol, 2, ax, 'Up', 2, unitStr=uLabel, formatStr=fmtAnn)
-    annotPos(data, dataCol, 3, ax, 'Up', 1.5, unitStr=uLabel, formatStr=fmtAnn)
+    if annPos1 is not None:
+        annotPos(data, dataCol, 1, ax, 'Up', annPos1, unitStr=uLabel, formatStr=fmtAnn)
+    if annPos2 is not None:
+        annotPos(data, dataCol, 2, ax, 'Up', annPos2, unitStr=uLabel, formatStr=fmtAnn)
+    if annPos3 is not None:
+        annotPos(data, dataCol, 3, ax, 'Up', annPos3, unitStr=uLabel, formatStr=fmtAnn)
     if hStart is None:
         prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel, formatStr=fmtAnn)
     else:
@@ -303,5 +309,6 @@ def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
     ax.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
     # set formatter
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    xfig.autofmt_xdate(rotation=45)
     plt.tight_layout()
     saveFigure(xfig, fTitle, date=hStart)

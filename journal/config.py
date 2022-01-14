@@ -43,18 +43,46 @@ stakePvLimMin = 5000000
 netHashLimMax = 700000
 netHashLimMin = 0
 
-# TxTfrValAdjNtv axis limits
+# TxTfrValAdjNtv daily axis limits
 netDailyTxVolNtvMax = 1600000
-netDailyTxVolNtvMin = -200000
+netDailyTxVolNtvMin = -300000
 
-# TxTfrValAdjNtv axis limits
+# TxTfrValAdjUSD daily axis limits
 netDailyTxVolUSDMax = 300000000
 netDailyTxVolUSDMin = -100000000
+
+# TxTfrValAdjNtv daily axis limits
+netMonthlyTxxVolNtvMax = 35000000
+netMonthlyTxxVolNtvMin = 0
+
+# TxTfrValAdjUSD daily axis limits
+netMonthlyTxxVolUSDMax = 5000000000
+netMonthlyTxxVolUSDMin = 0
+
 
 # cspp daily axis limits
 csppVolMax = 800000
 csppVolMin = 0
 
-# cspp daily axis limits
+# cspp monthly axis limits
 csppMVolMax = 15000000
 csppMVolMin = 0
+
+# cspp monthly axis limits USD
+csppMVolMaxUSD = 2000000000
+csppMVolMinUSD = 0
+
+# cspp mixed unspent supply %
+csppMixPCNax = 70
+csppMixPCNin = 40
+
+# cspp mixed unspent supply DCR
+csppMixDCRNax = 10000000
+csppMixDCRNin = 5000000
+
+# cspp mixed unspent supply DCR
+dexMonthlyVolDCRMax = 600000
+
+# cspp mixed unspent supply DCR
+dexMonthlyVolUSDMax = 70000000
+

@@ -18,12 +18,18 @@ staking.dailyTicketPoolValue()
 network.dailyHashrate()
 network.dailyTxTfrValAdjNtv()
 network.dailyTxTfrValAdjUSD()
+network.monthlyTxTfrValAdjNtv()
+network.monthlyTxTfrValAdjUSD()
+network.monthlydexVolDCR()
+network.monthlydexVolUSD()
 
 # privacy
 
 privacy.dailyVolume()
 privacy.monthlyVolumeDCR()
+privacy.monthlyVolumeUSD()
+privacy.dailyMixUnspentPC()
+privacy.dailyMixUnspentDCR()
 
 # display charts
 plt.show()
-#t test

@@ -198,5 +198,6 @@ def dcrdex():
     dexData['date'] = pd.to_datetime(dexData['start'])
     output = dexData[['date', 'vol']].copy()
     output = output.set_index('date')
+    output.index = pd.DatetimeIndex(output.index).normalize()
     output.index = pd.to_datetime(output.index, utc=True, format=fmtt, errors='ignore')
     return output

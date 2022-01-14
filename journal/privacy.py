@@ -7,7 +7,6 @@ import utils.cm as cm
 colorWindow = charts.colour_hex('dcr_orange')
 
 def dailyVolume():
-    # get daily stake participation from dcrdata.org API
     data = dcrdata_api.privacypart()
     charts.dailyPlot(data=data,
                      dataCol='PrivacyVol',
@@ -26,7 +25,6 @@ def dailyVolume():
                      ylim=[cfg.csppVolMin,cfg.csppVolMax])
 
 def dailyMixUnspentPC():
-    # get daily stake participation from dcrdata.org API
     data = dcrdata_api.anonimityset()
     charts.dailyPlot(data=data,
                      dataCol='mixedpc',
@@ -45,7 +43,6 @@ def dailyMixUnspentPC():
                      ylim=[cfg.csppMixPCNin,cfg.csppMixPCNax])
 
 def dailyMixUnspentDCR():
-    # get daily stake participation from dcrdata.org API
     data = dcrdata_api.anonimityset()
     charts.dailyPlot(data=data,
                      dataCol='anonymitySet',
@@ -66,7 +63,6 @@ def dailyMixUnspentDCR():
 
 
 def monthlyVolumeDCR():
-    # get daily stake participation from dcrdata.org API
     data = dcrdata_api.privacypart()
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'PrivacyVol': 'sum'})
     charts.monthlyBar(data=dataM,
@@ -88,7 +84,6 @@ def monthlyVolumeDCR():
                       annPos3=1.5)
 
 def monthlyVolumeUSD():
-    # get daily stake participation from dcrdata.org API
     data = dcrdata_api.privacypart()
     PriceUSD = cm.getMetric('dcr','PriceUSD',cfg.dStart,cfg.cEnd)
     data = data.merge(PriceUSD, left_on='date', right_on='date', how='left')

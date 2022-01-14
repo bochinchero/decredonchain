@@ -5,7 +5,6 @@ import utils.dcrdata_api as dcrdata_api
 colorWindow = charts.colour_hex('dcr_green')
 
 def dailyStakePart():
-    # get daily stake participation from dcrdata.org API
     data = dcrdata_api.stakepart()
     charts.dailyPlot(data=data,
                      dataCol='stakepart',
@@ -24,7 +23,6 @@ def dailyStakePart():
                      ylim=[cfg.stakeSpLimMin, cfg.stakeSpLimMax])
 
 def dailyTicketPrice():
-    # get daily ticket price  from dcrdata.org API
     data = dcrdata_api.ticketprice()
     charts.dailyPlot(data=data,
                      dataCol='ticketprice',
@@ -43,7 +41,6 @@ def dailyTicketPrice():
                      ylim=[cfg.stakeTpLimMin, cfg.stakeTpLimMax])
 
 def dailyTicketPoolValue():
-    # get daily ticket pool value from dcrdata.org API
     data = dcrdata_api.ticketpoolval()
     charts.dailyPlot(data=data,
                      dataCol='ticketpoolval',

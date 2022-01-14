@@ -7,7 +7,6 @@ import pandas as pd
 colorWindow = charts.colour_hex('dcr_blue')
 
 def dailyHashrate():
-    # get daily stake participation from dcrdata.org API
     data = dcrdata_api.hashrate()
     charts.dailyPlot(data=data,
                      dataCol='rate',
@@ -26,7 +25,6 @@ def dailyHashrate():
                      ylim=[cfg.netHashLimMin,cfg.netHashLimMax])
 
 def dailyTxTfrValAdjNtv():
-    # get daily stake participation from dcrdata.org API
     data = cm.getMetric('dcr','TxTfrValAdjNtv',cfg.dStart,cfg.dEnd)
     charts.dailyPlot(data=data,
                      dataCol='TxTfrValAdjNtv',
@@ -45,7 +43,6 @@ def dailyTxTfrValAdjNtv():
                      ylim=[cfg.netDailyTxVolNtvMin,cfg.netDailyTxVolNtvMax])
 
 def dailyTxTfrValAdjUSD():
-    # get daily stake participation from dcrdata.org API
     data = cm.getMetric('dcr','TxTfrValAdjUSD',cfg.dStart,cfg.dEnd)
     charts.dailyPlot(data=data,
                      dataCol='TxTfrValAdjUSD',
@@ -64,7 +61,6 @@ def dailyTxTfrValAdjUSD():
                      ylim=[cfg.netDailyTxVolUSDMin,cfg.netDailyTxVolUSDMax])
 
 def monthlyTxTfrValAdjNtv():
-    # get daily stake participation from dcrdata.org API
     data = cm.getMetric('dcr','TxTfrValAdjNtv',cfg.dStart,cfg.dEnd)
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'TxTfrValAdjNtv': 'sum'})
     charts.monthlyBar(data=dataM,
@@ -86,7 +82,6 @@ def monthlyTxTfrValAdjNtv():
                       annPos3=3.5)
 
 def monthlyTxTfrValAdjUSD():
-    # get daily stake participation from dcrdata.org API
     data = cm.getMetric('dcr','TxTfrValAdjUSD',cfg.dStart,cfg.dEnd)
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'TxTfrValAdjUSD': 'sum'})
     charts.monthlyBar(data=dataM,
@@ -108,7 +103,6 @@ def monthlyTxTfrValAdjUSD():
                       annPos3=3)
 
 def monthlydexVolDCR():
-    # get daily stake participation from dcrdata.org API
     data = dcrdata_api.dcrdex()
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'vol': 'sum'})
     charts.monthlyBar(data=dataM,
@@ -130,7 +124,6 @@ def monthlydexVolDCR():
                       annPos3=3)
 
 def monthlydexVolUSD():
-    # get daily stake participation from dcrdata.org API
     data = dcrdata_api.dcrdex()
     PriceUSD = cm.getMetric('dcr', 'PriceUSD', cfg.dStart, cfg.dEnd)
     data = data.merge(PriceUSD, left_on='date', right_on='date', how='left')

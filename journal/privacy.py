@@ -65,11 +65,12 @@ def dailyMixUnspentDCR():
 def monthlyVolumeDCR():
     data = dcrdata_api.privacypart()
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'PrivacyVol': 'sum'})
+    dataM.drop(dataM.tail(1).index, inplace=True)
     charts.monthlyBar(data=dataM,
                       dataCol='PrivacyVol',
                       bColour='dcr_orange',
                       cStart=cfg.dStartCSPP,
-                      cEnd=cfg.cEnd,
+                      cEnd=cfg.pEnd,
                       cTitle='StakeShuffle - Monthly Volume (DCR)',
                       fTitle='Stakeshuffle_Monthly_Volume_DCR',
                       yLabel='Monthly Volume (DCR)',
@@ -80,8 +81,8 @@ def monthlyVolumeDCR():
                       fmtAxis=charts.autoformatMillnoDec,
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[cfg.csppMVolMin,cfg.csppMVolMax],
-                      annPos2=2,
-                      annPos3=1.5)
+                      annPos1=2,
+                      annPos2=1)
 
 def monthlyVolumeUSD():
     data = dcrdata_api.privacypart()
@@ -90,11 +91,12 @@ def monthlyVolumeUSD():
     data['PrivacyVolUSD'] = data.PrivacyVol * data.PriceUSD
     data = data.drop(columns=['PrivacyVol', 'PriceUSD'])
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'PrivacyVolUSD': 'sum'})
+    dataM.drop(dataM.tail(1).index, inplace=True)
     charts.monthlyBar(data=dataM,
                       dataCol='PrivacyVolUSD',
                       bColour='dcr_orange',
                       cStart=cfg.dStartCSPP,
-                      cEnd=cfg.cEnd,
+                      cEnd=cfg.pEnd,
                       cTitle='StakeShuffle - Monthly Volume (USD)',
                       fTitle='Stakeshuffle_Monthly_Volume_USD',
                       yLabel='Monthly Volume (USD)',
@@ -105,5 +107,5 @@ def monthlyVolumeUSD():
                       fmtAxis=charts.autoformatMillnoDec,
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[cfg.csppMVolMinUSD,cfg.csppMVolMaxUSD],
-                      annPos2=6.5,
-                      annPos3=4)
+                      annPos1=6.5,
+                      annPos2=4)

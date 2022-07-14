@@ -31,5 +31,3 @@ privacy.monthlyVolumeUSD()
 privacy.dailyMixUnspentPC()
 privacy.dailyMixUnspentDCR()
 
-# display charts
-plt.show()

@@ -7,8 +7,8 @@ path = '$HOME/'
 fmtt = '%Y-%m-%dT%H:%M:%S'
 
 # evaluation period
-period_start = dt.date(int(2022),int(6),int(1))
-period_end   = dt.date(int(2022),int(7),int(1))
+period_start = dt.date(int(2022),int(7),int(1))
+period_end   = dt.date(int(2022),int(8),int(1))
 
 # declare offsets
 pdtd14 = pd.Timedelta(14, unit="d")
@@ -74,11 +74,11 @@ csppMVolMinUSD = 0
 
 # cspp mixed unspent supply %
 csppMixPCNax = 70
-csppMixPCNin = 40
+csppMixPCNin = 50
 
 # cspp mixed unspent supply DCR
 csppMixDCRNax = 10000000
-csppMixDCRNin = 5000000
+csppMixDCRNin = 7000000
 
 # cspp mixed unspent supply DCR
 dexMonthlyVolDCRMax = 600000

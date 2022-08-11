@@ -1,11 +1,13 @@
-
+from adjustText import adjust_text
 from matplotlib import pyplot as plt
 import matplotlib.ticker as ticker
 import pandas as pd
 # set colours
 import numpy as np
 import matplotlib.dates as mdates
+import matplotlib.colors as mcolors
 from pathlib import Path
+import datetime as dt
 import os
 
 def has_twin(ax):
@@ -318,3 +320,140 @@ def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
     xfig.autofmt_xdate(rotation=45)
     plt.tight_layout()
     saveFigure(xfig, fTitle, date=hStart)
+
+def cmapCreate():
+    absolute_path = os.path.join(os.getcwd(),'..','utils','assets','cmap_dcr.png')
+    cim = plt.imread(absolute_path)
+    cim = cim[cim.shape[0] // 2, 8:1727, :]
+    cmap = mcolors.ListedColormap(cim)
+    return cmap
+
+def fix_labels(mylabels, tooclose=0.1, sepfactor=2):
+    vecs = np.zeros((len(mylabels), len(mylabels), 2))
+    dists = np.zeros((len(mylabels), len(mylabels)))
+    for i in range(0, len(mylabels)-1):
+        for j in range(i+1, len(mylabels)):
+            a = np.array(mylabels[i].get_position())
+            b = np.array(mylabels[j].get_position())
+            dists[i,j] = np.linalg.norm(a-b)
+            vecs[i,j,:] = a-b
+            if dists[i,j] < tooclose:
+                mylabels[i].set_x(a[0] + sepfactor*vecs[i,j,0])
+                mylabels[i].set_y(a[1] + sepfactor*vecs[i,j,1])
+                mylabels[j].set_x(b[0] - sepfactor*vecs[i,j,0])
+                mylabels[j].set_y(b[1] - sepfactor*vecs[i,j,1])
+
+def donutChartL(title,data,date=None):
+    # calculating pct
+    data['pct'] = data['values'] / data['values'].sum()
+    # converting to str
+    data['pctStr'] = data['pct'].astype(float).map("{:.2%}".format)
+    # creating legend labels
+    data['legend'] = data['labels'].astype(str) +" : "+ data["values"].astype(str) + " (" + data['pctStr'] + ")"
+    # sort values desc
+    dSorted = data.sort_values(by=['values'],ascending=False)
+    # create legend list
+    legend = list(dSorted['legend'])
+    # prepare figure, title, etc.
+    fig, ax = plt.subplots(figsize=(12,6.75), dpi=100)
+    plt.gca().axis("equal")
+    fig.patch.set_facecolor(colour_hex('dcr_grey05'))
+    fig.patch.set_alpha(1)
+    fig.suptitle(title, fontsize=16, fontweight='bold', color=colour_hex('dcr_black'))
+    ax.set_facecolor(colour_hex('dcr_grey15'))
+    fig.canvas.manager.set_window_title(title)
+    # create colormap
+    cmap = cmapCreate()
+    theme = cmap
+    ax.set_prop_cycle("color", [theme(1. * i / len(dSorted['values']))
+                                 for i in range(len(dSorted['values']))])
+    # plot chart
+    wedges, texts = plt.pie(dSorted['values'],wedgeprops=dict(width=0.5,edgecolor=colour_hex('dcr_grey05'),linewidth=2.5),
+                                     radius=1,startangle=90, counterclock=True)
+
+    bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
+    kw = dict(arrowprops=dict(arrowstyle="-"),
+              bbox=bbox_props, zorder=0, va="center")
+
+    for i, p in enumerate(wedges):
+        ang = (p.theta2 - p.theta1) / 2. + p.theta1
+        y = np.sin(np.deg2rad(ang))
+        x = np.cos(np.deg2rad(ang))
+        horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
+        connectionstyle = "angle,angleA=0,angleB={}".format(ang)
+        kw["arrowprops"].update({"connectionstyle": connectionstyle})
+        if (i % 2) == 0:
+            ifactor = 1.20
+        else:
+            ifactor = 1.25
+        ax.annotate(legend[i], xy=(x, y), xytext=(1.25 * np.sign(x), ifactor * y),
+                    horizontalalignment=horizontalalignment, **kw)
+    # exit func
+    if date is not None:
+        dateStr = date.strftime("%Y-%m-%d")
+        plt.axis('equal')
+        ax.text(2.4, -1.35, dateStr, verticalalignment='bottom', horizontalalignment='right')
+    saveFigure(fig, title, date=date)
+    return ax, fig
+
+def donutChartS(title,data,label,date=None):
+    # calculating pct
+    data['pct'] = data['values'] / data['values'].sum()
+    # converting to str
+    data['pctStr'] = data['pct'].astype(float).map("{:.2%}".format)
+
+    dSorted = data.sort_values(by=['values'],ascending=False)
+
+    # prepare figure, title, etc.
+    fig, ax = plt.subplots(figsize=(12,6.75), dpi=100)
+    plt.gca().axis("equal")
+    fig.patch.set_facecolor(colour_hex('dcr_grey05'))
+    fig.patch.set_alpha(1)
+    fig.suptitle(title, fontsize=16, fontweight='bold', color=colour_hex('dcr_black'))
+    ax.set_facecolor(colour_hex('dcr_grey15'))
+    fig.canvas.manager.set_window_title(title)
+    fig.subplots_adjust(right=1.3)
+    # create colormap
+    cmap = cmapCreate()
+    theme = cmap
+    ax.set_prop_cycle("color", [theme(1. * i / len(dSorted['values']))
+                                 for i in range(len(dSorted['values']))])
+    idents = []
+    for i in range(len(dSorted)):
+        idents.append(str(i+1))
+    # plot chart
+    wedges, texts = plt.pie(dSorted['values'],wedgeprops=dict(width=0.5,edgecolor=colour_hex('dcr_grey05'),linewidth=2.5),
+                                     radius=1,startangle=90, counterclock=True)
+
+    tColors = []
+    for i in range(len(wedges)):
+        tColors.append(wedges[i].get_facecolor())
+
+    label.append('%')
+    cell_text = dSorted[['labels','values', 'pctStr']].copy()
+    # Add a table at the bottom of the axes
+    table = plt.table(cellText=cell_text.values,
+                      colLabels=label,
+                      cellLoc='center',
+                      bbox=[0.00, 0.1, 0.25, 0.8],
+                      colWidths=[0.2,0.05,0.05],
+                      loc='center left')
+    for i in range(1,(len(dSorted)+1)):
+        table.add_cell(i, -1, 0.025, 0.05)
+
+    for key, cell in table._cells.items():
+        cell.set_height(0.4)
+        if key[1] < 0:
+            cell.set_facecolor(tColors[key[0]-1])
+        if key[0] == 0:
+            cell.set_facecolor(colour_hex('dcr_grey25'))
+            cell._text.set_color(colour_hex('dcr_black'))
+        if (key[0] > 0) and (key[1] >= 0):
+            cell.set_facecolor('w')
+
+    if date is not None:
+        dateStr = date.strftime("%Y-%m-%d")
+        plt.axis('equal')
+        ax.text(1.395, -1.345, dateStr, verticalalignment='bottom', horizontalalignment='right')
+    saveFigure(fig, title, date=date)
+    return ax, fig

@@ -321,10 +321,13 @@ def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
     plt.tight_layout()
     saveFigure(xfig, fTitle, date=hStart)
 
-def cmapCreate():
-    absolute_path = os.path.join(os.getcwd(),'..','utils','assets','cmap_dcr.png')
+def cmapCreate(inverse=False):
+    if inverse is False:
+        absolute_path = os.path.join(os.getcwd(),'..','utils','assets','cmap_dcr.png')
+    else:
+        absolute_path = os.path.join(os.getcwd(),'..','utils','assets','cmap_dcr_inv.png')
     cim = plt.imread(absolute_path)
-    cim = cim[cim.shape[0] // 2, 8:1727, :]
+    cim = cim[cim.shape[0] // 2, 0:1727, :]
     cmap = mcolors.ListedColormap(cim)
     return cmap
 
@@ -343,7 +346,7 @@ def fix_labels(mylabels, tooclose=0.1, sepfactor=2):
                 mylabels[j].set_x(b[0] - sepfactor*vecs[i,j,0])
                 mylabels[j].set_y(b[1] - sepfactor*vecs[i,j,1])
 
-def donutChartL(title,data,date=None):
+def donutChartL(title,data,date=None,sourceStr=None):
     # calculating pct
     data['pct'] = data['values'] / data['values'].sum()
     # converting to str
@@ -351,7 +354,7 @@ def donutChartL(title,data,date=None):
     # creating legend labels
     data['legend'] = data['labels'].astype(str) +" : "+ data["values"].astype(str) + " (" + data['pctStr'] + ")"
     # sort values desc
-    dSorted = data.sort_values(by=['values'],ascending=False)
+    dSorted = data.sort_values(by=['values'],ascending=True)
     # create legend list
     legend = list(dSorted['legend'])
     # prepare figure, title, etc.
@@ -363,18 +366,18 @@ def donutChartL(title,data,date=None):
     ax.set_facecolor(colour_hex('dcr_grey15'))
     fig.canvas.manager.set_window_title(title)
     # create colormap
-    cmap = cmapCreate()
+    cmap = cmapCreate(inverse=True)
     theme = cmap
     ax.set_prop_cycle("color", [theme(1. * i / len(dSorted['values']))
                                  for i in range(len(dSorted['values']))])
     # plot chart
     wedges, texts = plt.pie(dSorted['values'],wedgeprops=dict(width=0.5,edgecolor=colour_hex('dcr_grey05'),linewidth=2.5),
-                                     radius=1,startangle=90, counterclock=True)
+                                     radius=1,startangle=90, counterclock=False)
 
     bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
     kw = dict(arrowprops=dict(arrowstyle="-"),
               bbox=bbox_props, zorder=0, va="center")
-
+    d = 0
     for i, p in enumerate(wedges):
         ang = (p.theta2 - p.theta1) / 2. + p.theta1
         y = np.sin(np.deg2rad(ang))
@@ -382,21 +385,29 @@ def donutChartL(title,data,date=None):
         horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
         connectionstyle = "angle,angleA=0,angleB={}".format(ang)
         kw["arrowprops"].update({"connectionstyle": connectionstyle})
-        if (i % 2) == 0:
-            ifactor = 1.20
+        if i == 0:
+            ifactor = 1.2
         else:
-            ifactor = 1.25
+            if (i % 2) == 0:
+                ifactor = 1.05
+            else:
+                ifactor = 1.1
         ax.annotate(legend[i], xy=(x, y), xytext=(1.25 * np.sign(x), ifactor * y),
                     horizontalalignment=horizontalalignment, **kw)
     # exit func
     if date is not None:
         dateStr = date.strftime("%Y-%m-%d")
+        if sourceStr is None:
+            sourceStr = dateStr
         plt.axis('equal')
-        ax.text(2.4, -1.35, dateStr, verticalalignment='bottom', horizontalalignment='right')
+        xText = -0.135
+        yText = -0.11
+        plt.text(xText, yText, sourceStr, transform=ax.transAxes)
+    title = title.replace("/", "")
     saveFigure(fig, title, date=date)
     return ax, fig
 
-def donutChartS(title,data,label,date=None):
+def donutChartS(title,data,label,date=None,sourceStr=None):
     # calculating pct
     data['pct'] = data['values'] / data['values'].sum()
     # converting to str
@@ -436,7 +447,7 @@ def donutChartS(title,data,label,date=None):
                       colLabels=label,
                       cellLoc='center',
                       bbox=[0.00, 0.1, 0.25, 0.8],
-                      colWidths=[0.2,0.05,0.05],
+                      colWidths=[0.2,0.1,0.1],
                       loc='center left')
     for i in range(1,(len(dSorted)+1)):
         table.add_cell(i, -1, 0.025, 0.05)
@@ -453,7 +464,12 @@ def donutChartS(title,data,label,date=None):
 
     if date is not None:
         dateStr = date.strftime("%Y-%m-%d")
+        if sourceStr is None:
+            sourceStr = dateStr
         plt.axis('equal')
-        ax.text(1.395, -1.345, dateStr, verticalalignment='bottom', horizontalalignment='right')
+        xText = -0.09
+        yText = -0.11
+        plt.text(xText, yText, sourceStr, transform=ax.transAxes)
+    title = title.replace("/", "")
     saveFigure(fig, title, date=date)
     return ax, fig

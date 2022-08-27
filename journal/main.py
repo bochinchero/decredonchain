@@ -1,6 +1,7 @@
 import staking
 import network
 import privacy
+import other
 from matplotlib import pyplot as plt
 
 # this routine just calls the other scripts to plot each individual chart
@@ -31,3 +32,7 @@ privacy.monthlyVolumeUSD()
 privacy.dailyMixUnspentPC()
 privacy.dailyMixUnspentDCR()
 
+# pie charts
+other.hashDist()
+other.nodesDist()
+other.vspDist()

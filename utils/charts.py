@@ -346,7 +346,7 @@ def fix_labels(mylabels, tooclose=0.1, sepfactor=2):
                 mylabels[j].set_x(b[0] - sepfactor*vecs[i,j,0])
                 mylabels[j].set_y(b[1] - sepfactor*vecs[i,j,1])
 
-def donutChartL(title,data,date=None,sourceStr=None):
+def donutChartL(title,data,date=None,sourceStr=None,authStr=None):
     # calculating pct
     data['pct'] = data['values'] / data['values'].sum()
     # converting to str
@@ -403,15 +403,21 @@ def donutChartL(title,data,date=None,sourceStr=None):
         xText = -0.135
         yText = -0.11
         plt.text(xText, yText, sourceStr, transform=ax.transAxes)
+
+    if authStr is not None:
+        xText = 1.0925
+        yText = -0.11
+        plt.text(xText, yText, authStr, transform=ax.transAxes,ha='right')
+
     title = title.replace("/", "")
     saveFigure(fig, title, date=date)
     return ax, fig
 
-def donutChartS(title,data,label,date=None,sourceStr=None):
+def donutChartS(title,data,label,date=None,sourceStr=None,authStr=None):
     # calculating pct
     data['pct'] = data['values'] / data['values'].sum()
     # converting to str
-    data['pctStr'] = data['pct'].astype(float).map("{:.2%}".format)
+    data['pctStr'] = data['pct'].astype(float).map("{:.1%}".format)
 
     dSorted = data.sort_values(by=['values'],ascending=False)
 
@@ -446,22 +452,29 @@ def donutChartS(title,data,label,date=None,sourceStr=None):
     table = plt.table(cellText=cell_text.values,
                       colLabels=label,
                       cellLoc='center',
-                      bbox=[0.00, 0.1, 0.25, 0.8],
-                      colWidths=[0.2,0.1,0.1],
+                      bbox=[0.00, 0.05, 0.3, 0.9],
+                      colWidths=[0.5,0.15,0.15],
                       loc='center left')
     for i in range(1,(len(dSorted)+1)):
         table.add_cell(i, -1, 0.025, 0.05)
 
     for key, cell in table._cells.items():
-        cell.set_height(0.4)
-        if key[1] < 0:
+        if key[1] < 0:      # cells indicating the color of each wedge
             cell.set_facecolor(tColors[key[0]-1])
-        if key[0] == 0:
+        if key[1] == 0:     # cells for the index / labels
+            cell.set_text_props(ha="left")
+        if key[1] > 0:      # cells with the values
+            cell.set_text_props(ha="right")
+        if key[0] == 0:     # header cells
             cell.set_facecolor(colour_hex('dcr_grey25'))
             cell._text.set_color(colour_hex('dcr_black'))
-        if (key[0] > 0) and (key[1] >= 0):
+        if (key[0] > 0) and (key[1] >= 0):  # value cells
             cell.set_facecolor('w')
+        cell.set_height(0.6)
+        cell.set_text_props(va="center")
 
+    table.set_fontsize(12)
+    table.set_rasterized(True)
     if date is not None:
         dateStr = date.strftime("%Y-%m-%d")
         if sourceStr is None:
@@ -470,6 +483,12 @@ def donutChartS(title,data,label,date=None,sourceStr=None):
         xText = -0.09
         yText = -0.11
         plt.text(xText, yText, sourceStr, transform=ax.transAxes)
+
+    if authStr is not None:
+        xText = 0.72
+        yText = -0.11
+        plt.text(xText, yText, authStr, transform=ax.transAxes,ha='right')
+
     title = title.replace("/", "")
     saveFigure(fig, title, date=date)
     return ax, fig

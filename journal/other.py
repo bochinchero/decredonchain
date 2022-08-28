@@ -17,14 +17,14 @@ def hashDist():
     # copy only the relevant columns
     hashData = hashData.rename(columns={'rate':'values','pool':'labels'})
     hashStr='Data from poolbay.io on '+ srcDate.strftime("%Y-%m-%d")
-    charts.donutChartL('Hashrate Distribution (Ph/s)',hashData,srcDate,sourceStr=hashStr)
+    charts.donutChartL('Hashrate Distribution (Ph/s)',hashData,srcDate,sourceStr=hashStr,authStr='Decred Journal')
 
 def nodesDist():
     # pull node data
     nodesData = snapcsv.nodeDist(srcDate)
     nodesData = nodesData.rename(columns={'count':'values','useragent':'labels'})
     nodeStr='Data from nodes.jholdstock.uk on '+ srcDate.strftime("%Y-%m-%d")
-    charts.donutChartL('Reachable Node Versions',nodesData,srcDate,sourceStr=nodeStr)
+    charts.donutChartL('Reachable Node Versions',nodesData,srcDate,sourceStr=nodeStr,authStr='Decred Journal')
 
 def vspDist():
     # pull vsp data
@@ -33,5 +33,5 @@ def vspDist():
     vspData = vspData.rename(columns={'id':'labels','voting':'values'})
     vspStr='Data from decred.org/vsp on '+ srcDate.strftime("%Y-%m-%d")
     charts.donutChartS('Voting Service Provider (VSP) - Live Ticket Distribution',vspData,
-                                   ['Voting Service Providers','Tickets'],srcDate,sourceStr=vspStr)
-
+                                   ['Voting Service Providers','Tickets'],srcDate,sourceStr=vspStr,
+                       authStr='Decred Journal')

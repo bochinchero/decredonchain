@@ -389,11 +389,11 @@ def donutChartL(title,data,date=None,sourceStr=None,authStr=None):
             ifactor = 1.2
         else:
             if (i % 2) == 0:
-                ifactor = 1.05
+                ifactor = 1.125
             else:
-                ifactor = 1.1
+                ifactor = 1.075
         ax.annotate(legend[i], xy=(x, y), xytext=(1.25 * np.sign(x), ifactor * y),
-                    horizontalalignment=horizontalalignment, **kw)
+                    horizontalalignment=horizontalalignment,fontsize=12, **kw)
     # exit func
     if date is not None:
         dateStr = date.strftime("%Y-%m-%d")

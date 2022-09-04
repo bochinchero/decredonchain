@@ -30,7 +30,7 @@ def dailyTxTfrValAdjNtv():
                      dataCol='TxTfrValAdjNtv',
                      cStart=cfg.cStart,
                      cEnd=cfg.cEnd,
-                     cTitle='Network - Daily Adjust Transaction Volume (DCR)',
+                     cTitle='Network - Daily Adjusted Transaction Volume (DCR)',
                      fTitle='Network_Daily_TxTfrValAdjNtv',
                      yLabel='Transaction Volume (DCR)',
                      uLabel='DCR',

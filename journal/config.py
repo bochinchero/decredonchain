@@ -7,8 +7,8 @@ path = '$HOME/'
 fmtt = '%Y-%m-%dT%H:%M:%S'
 
 # evaluation period
-period_start = dt.date(int(2022),int(7),int(1))
-period_end   = dt.date(int(2022),int(8),int(1))
+period_start = dt.date(int(2022),int(8),int(1))
+period_end   = dt.date(int(2022),int(9),int(1))
 
 # declare offsets
 pdtd14 = pd.Timedelta(14, unit="d")
@@ -32,23 +32,23 @@ stakeTpLimMax = 350
 stakeTpLimMin = 100
 
 # stake participation limits
-stakeSpLimMax = 70
-stakeSpLimMin = 50
+stakeSpLimMax = 75
+stakeSpLimMin = 45
 
 # pool value limits
 stakePvLimMax = 12000000
 stakePvLimMin = 6000000
 
 # mining axis limits
-netHashLimMax = 700000
+netHashLimMax = 400000
 netHashLimMin = -100000
 
 # TxTfrValAdjNtv daily axis limits
-netDailyTxVolNtvMax = 1600000
+netDailyTxVolNtvMax = 1000000
 netDailyTxVolNtvMin = -300000
 
 # TxTfrValAdjUSD daily axis limits
-netDailyTxVolUSDMax = 300000000
+netDailyTxVolUSDMax = 150000000
 netDailyTxVolUSDMin = -100000000
 
 # TxTfrValAdjNtv daily axis limits

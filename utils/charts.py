@@ -350,9 +350,14 @@ def donutChartL(title,data,date=None,sourceStr=None,authStr=None):
     # calculating pct
     data['pct'] = data['values'] / data['values'].sum()
     # converting to str
-    data['pctStr'] = data['pct'].astype(float).map("{:.2%}".format)
-    # creating legend labels
-    data['legend'] = data['labels'].astype(str) +" : "+ data["values"].astype(str) + " (" + data['pctStr'] + ")"
+    data['pctStr'] = data['pct'].astype(float).map("{:.1%}".format)
+    # check if values are decimals
+    if not data['values'].astype(float).apply(float.is_integer).all():
+        # creating legend labels and format for 2 decimals
+        data['legend'] = data['labels'].astype(str) + " : " + data["values"].astype(float).map("{:1.2f}".format) + " (" + data['pctStr'] + ")"
+    else:
+        # create legend labels
+        data['legend'] = data['labels'].astype(str) + " : " + data["values"].astype(str) + " (" + data['pctStr'] + ")"
     # sort values desc
     dSorted = data.sort_values(by=['values'],ascending=True)
     # create legend list
@@ -386,12 +391,18 @@ def donutChartL(title,data,date=None,sourceStr=None,authStr=None):
         connectionstyle = "angle,angleA=0,angleB={}".format(ang)
         kw["arrowprops"].update({"connectionstyle": connectionstyle})
         if i == 0:
-            ifactor = 1.2
+            ifactor = 1.225
         else:
-            if (i % 2) == 0:
-                ifactor = 1.125
+            if i == 1:
+                ifactor = 1.1
             else:
-                ifactor = 1.075
+                if i == 2:
+                    ifactor = 1.05
+                else:
+                    if (i % 2) == 0:
+                        ifactor = 1.125
+                    else:
+                        ifactor = 1.075
         ax.annotate(legend[i], xy=(x, y), xytext=(1.25 * np.sign(x), ifactor * y),
                     horizontalalignment=horizontalalignment,fontsize=12, **kw)
     # exit func

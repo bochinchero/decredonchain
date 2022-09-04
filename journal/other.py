@@ -9,7 +9,7 @@ import datetime as dt
 srcDate = cfg.pEnd
 
 # below is for charting a specific date
-#srcDate = pd.to_datetime(dt.date(int(2022),int(8),int(27)))
+#srcDate = pd.to_datetime(dt.date(int(2022),int(9),int(1)))
 
 def hashDist():
     # pull hashrate data

@@ -201,3 +201,17 @@ def dcrdex():
     output.index = pd.DatetimeIndex(output.index).normalize()
     output.index = pd.to_datetime(output.index, utc=True, format=fmtt, errors='ignore')
     return output
+
+def missedvotes():
+    # Create a dcrdata client and grab the hashrate
+    dcrdata = DcrdataClient("https://dcrdata.decred.org")
+    missedvotes = dcrdata.chart("missed-votes")
+    # convert to from json dict to data frame
+    df = pd.DataFrame(missedvotes)
+    # convert time since epoch to datetime
+    df['date'] = pd.to_datetime(df['t'],unit='s')
+    # convert price from atoms to base dcr
+    output = df[['date', 'missed']].copy()
+    output = output.set_index('date')
+    output.index = pd.to_datetime(output.index, utc=True, format=fmtt, errors='ignore')
+    return output

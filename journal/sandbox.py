@@ -4,79 +4,46 @@ import utils.charts as charts
 import numpy as np
 import pandas as pd
 import datetime as dt
+import utils.dcrdata_api as dcrdata_api
+import utils.snapcsv as dcrsnapcsv
 
-sDate = pd.to_datetime(dt.date(int(2022),int(7),int(1)))
+sDate = pd.to_datetime(dt.date(int(2022),int(9),int(1)))
+eDate = pd.to_datetime(dt.date.today())
 
-cmap = charts.cmapCreate()
+# grab the missed votes from dcrdata
+data = dcrdata_api.missedvotes()
+# filter out the dataframe from start to end dates
+dataF = data.loc[sDate:eDate]
+# sum all missed votes
+missedVotes = dataF['missed'].sum()
 
-dataRaw = """123.dcr.rocks,866
-big.decred.energy,107
-dcrhive.com,36
-dcrpool.ibitlin.com,55
-dcrvsp.dittrex.com,31
-dcrvsp.ubiqsmart.com,223
-decredvoting.com,132
-stakey.net,225
-ultravsp.uk,489
-vsp.coinmine.pl,337
-vsp.dcr.farm,144
-vsp.decredcommunity.org,374
-vsp.stakeminer.com,692
-vspd.99split.com,735
-vspd.bass.cf,55
-vspd.decredbrasil.com,98
-vspd.stakey.com,2344
-vspd.synergy-crypto.net,225"""
+# get data from start date
+vspDataStart = dcrsnapcsv.vspDist(sDate)
+vspMissedVotesStart = vspDataStart[['id','revoked','voted']].copy()
+vspMissedVotesStart = vspMissedVotesStart.set_index('id')
 
-pValues = []
-pLabels = []
-sLines = dataRaw.splitlines()
-for i in sLines:
-    sEntry = i.split(',')
-    pLabels.append(sEntry[0])
-    pValues.append(int(sEntry[1]))
+# get data from end date
+vspDataEnd = dcrsnapcsv.vspDist(eDate)
+vspMissedVotesEnd = vspDataEnd[['id','revoked','voted']].copy()
+vspMissedVotesEnd = vspMissedVotesEnd.set_index('id')
 
-df = pd.DataFrame({'labels':pLabels,'values':pValues})
-fig1, ax1 = charts.donutChartS('Voting Service Provider (VSP) - Live Ticket Distribution',df,
-                               ['Voting Service Providers','Tickets'],sDate,sourceStr='2022-08-01')
-plt.axis('equal')
+# get difference between start/end dates
+vspMissed = vspMissedVotesEnd.subtract(vspMissedVotesStart, fill_value=0)
 
-dataRaw = """v1.7.1,51
-v1.7.2,33
-v1.7.0,14
-v1.7 dev builds,9
-v1.8 dev builds,4
-other,6"""
+# get difference between start/end dates
+vspMissed = vspMissedVotesEnd.subtract(vspMissedVotesStart, fill_value=0)
 
-pValues = []
-pLabels = []
-sLines = dataRaw.splitlines()
-for i in sLines:
-    sEntry = i.split(',')
-    pLabels.append(sEntry[0])
-    pValues.append(int(sEntry[1]))
+soloMissed = missedVotes - vspMissed['revoked'].sum()
+dict = {'id': 'Solo Stakers', 'revoked': soloMissed}
+soloMissed = soloMissed.append(dict, ignore_index = False)
+print(soloMissed)
 
-df = pd.DataFrame({'labels':pLabels,'values':pValues})
-fig2, ax2 = charts.donutChartL('Reachable Node Versions',df,sDate,sourceStr='2022-08-01')
-plt.axis('equal')
 
-dataRaw = """AntPool,2.41
-BTC.com,3.81
-CoinMine,0.443
-F2Pool,5.413
-Poolin,14.753
-ViaBTC,14.769"""
 
-pValues = []
-pLabels = []
-sLines = dataRaw.splitlines()
-for i in sLines:
-    sEntry = i.split(',')
-    pLabels.append(sEntry[0])
-    pValues.append(float(sEntry[1]))
-
-df = pd.DataFrame({'labels':pLabels,'values':pValues})
-fig3, ax3 = charts.donutChartL('Hashrate Distribution (Ph/s)',df,sDate,sourceStr='Data from miningpoolstats.stream on 2022-08-01')
-plt.axis('equal')
-
-plt.show()
+vspMissedFinal = vspMissed.loc[~(vspMissed==0).all(axis=1)]
+print(vspMissedFinal)
+vspMissedFinal['missedPct'] = 100 * vspMissedFinal['revoked'] / vspMissedFinal['voted']
+print(vspMissedFinal)
+vspMissedPct = vspMissedFinal['missedPct'].copy()
+vspMissedPct = vspMissedPct.sort_values(ascending=False)
+vspMissedPct.plot(kind='bar')

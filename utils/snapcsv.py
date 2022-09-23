@@ -5,16 +5,18 @@ from datetime import datetime
 
 def hashDist(date):
     dateStr = date.strftime("%Y-%m-%d")
+    yearMonthStr = date.strftime("%Y/%m/")
     # concat date into base url
-    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/hashrate/' + dateStr + '.csv'
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/hashrate/' + yearMonthStr + dateStr + '.csv'
     # create pd dataframe with raw csv data
     data = pd.read_csv(url)
     return data
 
 def vspDist(date,testnet=False):
     dateStr = date.strftime("%Y-%m-%d")
+    yearMonthStr = date.strftime("%Y/%m/")
     # concat date into base url
-    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/vsp/' + dateStr + '.csv'
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/vsp/' + yearMonthStr + dateStr + '.csv'
     # create pd dataframe with raw csv data
     data = pd.read_csv(url)
     # filter out testnet or mainnet vsps
@@ -26,8 +28,9 @@ def vspDist(date,testnet=False):
 
 def nodeDist(date):
     dateStr = date.strftime("%Y-%m-%d")
+    yearMonthStr = date.strftime("%Y/%m/")
     # concat date into base url
-    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/nodes/' + dateStr + '.csv'
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/nodes/' + yearMonthStr + dateStr + '.csv'
     # create pd dataframe with raw csv data
     data = pd.read_csv(url)
     return data

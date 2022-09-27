@@ -34,6 +34,7 @@ def ticketCount():
     # These keys changed, see https://github.com/decred/dcrdata/pull/1507
     # convert to from json dict to data frame
     df = pd.DataFrame(ticketPrice)
+    print(df)
     # convert time since epoch to datetime
     df['date'] = pd.to_datetime(pd.to_datetime(df['t'],unit='s').dt.date)
     output = df[['date', 'count']].copy()
@@ -212,6 +213,20 @@ def missedvotes():
     df['date'] = pd.to_datetime(df['t'],unit='s')
     # convert price from atoms to base dcr
     output = df[['date', 'missed']].copy()
+    output = output.set_index('date')
+    output.index = pd.to_datetime(output.index, utc=True, format=fmtt, errors='ignore')
+    return output
+
+def ticketpoolsize():
+    # Create a dcrdata client and grab the ticket pool value
+    dcrdata = DcrdataClient("https://dcrdata.decred.org")
+    ticketpoolval = dcrdata.chart("ticket-pool-size")
+    # convert to from json dict to data frame
+    df = pd.DataFrame(ticketpoolval)
+    # convert time since epoch to datetime
+    df['date'] = pd.to_datetime(df['t'],unit='s')
+    # convert price from atoms to base dcr
+    output = df[['date', 'count']].copy()
     output = output.set_index('date')
     output.index = pd.to_datetime(output.index, utc=True, format=fmtt, errors='ignore')
     return output

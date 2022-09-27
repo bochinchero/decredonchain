@@ -13,6 +13,7 @@ from matplotlib import pyplot as plt
 staking.dailyTicketPrice()
 staking.dailyStakePart()
 staking.dailyTicketPoolValue()
+staking.monthlyMissedVotes()
 
 # network
 

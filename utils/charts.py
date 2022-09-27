@@ -373,7 +373,7 @@ def donutChartL(title,data,date=None,sourceStr=None,authStr=None):
     # create colormap
     cmap = cmapCreate(inverse=True)
     theme = cmap
-    ax.set_prop_cycle("color", [theme(1. * i / len(dSorted['values']))
+    ax.set_prop_cycle("color", [theme(1. * i / (len(dSorted['values'])-1))
                                  for i in range(len(dSorted['values']))])
     # plot chart
     wedges, texts = plt.pie(dSorted['values'],wedgeprops=dict(width=0.5,edgecolor=colour_hex('dcr_grey05'),linewidth=2.5),
@@ -502,4 +502,17 @@ def donutChartS(title,data,label,date=None,sourceStr=None,authStr=None):
 
     title = title.replace("/", "")
     saveFigure(fig, title, date=date)
+    return ax, fig
+
+def hcatBar(data,dataCol,bColour,cTitle,yLabel,fmtAxis=None,fmtAnn=None,ylim=None):
+
+    ax, xfig = fig(cTitle,yLabel)
+    # charting
+    ax.barh(data.index, data[dataCol], color=colour_hex(bColour), width=15,
+           label=yLabel, align='center')
+    ax.yaxis.set_major_formatter(fmtAxis)
+    plt.setp(ax.xaxis.get_majorticklabels(), ha='center')
+    ax.legend(loc='upper left')
+    plt.tight_layout()
+    #saveFigure(xfig, fTitle, date=hStart)
     return ax, fig

@@ -59,7 +59,7 @@ def dailyTicketPoolValue():
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[cfg.stakePvLimMin,cfg.stakePvLimMax])
 
-def monthlydexVolUSD():
+def monthlyMissedVotes():
     # grab the missed votes from dcrdata
     data = dcrdata_api.missedvotes()
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'missed': 'sum'})
@@ -78,6 +78,6 @@ def monthlydexVolUSD():
                       dStart=cfg.dStart,
                       fmtAxis=charts.autoformatMillnoDec,
                       fmtAnn=charts.autoformatNoDec,
-                      ylim=[0, 500],
+                      ylim=[0, 2000],
                       annPos1=6,
                       annPos2=3)

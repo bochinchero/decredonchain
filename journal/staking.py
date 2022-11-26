@@ -55,7 +55,7 @@ def dailyTicketPoolValue():
                      hEnd=cfg.pEnd,
                      hColor=colorWindow,
                      dStart=cfg.dStart,
-                     fmtAxis=charts.autoformatMillnoDec,
+                     fmtAxis=charts.autoformatMill,
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[cfg.stakePvLimMin,cfg.stakePvLimMax])
 
@@ -67,7 +67,7 @@ def monthlyMissedVotes():
     charts.monthlyBar(data=dataM,
                       dataCol='missed',
                       bColour='dcr_green',
-                      cStart=cfg.dStartCSPP,
+                      cStart=cfg.dStart,
                       cEnd=cfg.pEnd,
                       cTitle='Staking - Monthly Missed Tickets',
                       fTitle='Staking_Monthly_Missed_Tickets',

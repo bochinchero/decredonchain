@@ -12,8 +12,8 @@ srcDateStart = cfg.pStart
 srcDateEnd = cfg.pEnd
 
 # below is for charting a specific date
-srcDateStart = pd.to_datetime(dt.date(int(2022),int(9),int(1)), utc=True, errors='ignore')
-srcDateEnd = pd.to_datetime(dt.date(int(2022),int(9),int(25)), utc=True, errors='ignore')
+#srcDateStart = pd.to_datetime(dt.date(int(2022),int(9),int(1)), utc=True, errors='ignore')
+#srcDateEnd = pd.to_datetime(dt.date(int(2022),int(9),int(25)), utc=True, errors='ignore')
 
 def hashDist():
     # pull hashrate data
@@ -36,6 +36,28 @@ def vspDist():
     ticketsTot = data[data.index == srcDateEnd]['count'].sum()
     # pull vsp data
     vspRaw = snapcsv.vspDist(srcDateEnd)
+    # convert last updated to pd date time, tz aware
+    vspRaw['lastupdated'] = pd.to_datetime(vspRaw['lastupdated'], utc=True, errors='ignore')
+    # calculate days since last update
+    vspRaw['daysSinceUpdate'] = (srcDateEnd - vspRaw['lastupdated']).dt.days + 1
+    # day limit for still showing in chart - cutoff threshold
+    dayLimit = 7
+    # create footnote list
+    fnoteList = []
+    # update rows for VSPs that are only slightly out of date
+    for index, row in vspRaw.iterrows():
+        idStr = row['id']
+        # check if there are stale vsps below the cutoff threshold
+        if (row['daysSinceUpdate'] > 0) and ((row['daysSinceUpdate'] <= dayLimit)):
+            lastUpdateStr = str(row['daysSinceUpdate']) + 'd'  # pull days since last update as a string
+            newStr = idStr + ' (' + lastUpdateStr + " old)"  # create updated id string
+            vspRaw.at[index, 'id'] = newStr  # update id string in dataframe
+        if ((row['daysSinceUpdate'] > dayLimit)):
+            lastUpdateStr = str(row['lastupdated'].date()) # pull days since last update as a string
+            ticketCountStr = str(row['voting'])  # pull live tickets in last update as string
+            fnoteStr = idStr + ' removed due to stale data, last updated on ' + lastUpdateStr + " (" + ticketCountStr + ' live tickets).'
+            fnoteList.append(fnoteStr)  # append entry to footnote list
+            vspRaw = vspRaw.drop(index)  # drop row from dataframe
     vspData = vspRaw[['id', 'voting']].copy()
     # get sum of vsp live tickets
     vspSum = vspData['voting'].sum()
@@ -51,13 +73,15 @@ def vspDist():
     voteDist = voteDist.reset_index()
     voteDist = voteDist.rename(columns={'id':'labels','voting':'values'})
     voteDistStr='Data from decred.org/vsp and dcrdata.org on '+ srcDateEnd.strftime("%Y-%m-%d")
-    charts.donutChartL('Live Ticket Distribution', voteDist, srcDateEnd, sourceStr=voteDistStr,
+    fnoteList.append(voteDistStr) # append source string
+    charts.donutChartL('Live Ticket Distribution', voteDist, srcDateEnd, sourceStr=fnoteList,
                        authStr='Decred Journal')
     vspData = vspData.reset_index()
     vspData = vspData.rename(columns={'id':'labels','voting':'values'})
-    vspStr='Data from decred.org/vsp on '+ srcDateEnd.strftime("%Y-%m-%d")
+    fnoteList[-1] ='Data from decred.org/vsp on '+ srcDateEnd.strftime("%Y-%m-%d")
+    print(fnoteList)
     charts.donutChartS('Voting Service Provider (VSP) - Live Ticket Distribution',vspData,
-                                   ['Voting Service Providers','Tickets'],srcDateEnd,sourceStr=vspStr,
+                                   ['Voting Service Providers','Tickets'],srcDateEnd,sourceStr=fnoteList,
                        authStr='Decred Journal')
 
 def missedDist():

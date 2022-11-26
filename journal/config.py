@@ -7,8 +7,8 @@ path = '$HOME/'
 fmtt = '%Y-%m-%dT%H:%M:%S'
 
 # evaluation period
-period_start = dt.date(int(2022),int(8),int(1))
-period_end   = dt.date(int(2022),int(9),int(1))
+period_start = dt.date(int(2022),int(10),int(1))
+period_end   = dt.date(int(2022),int(11),int(1))
 
 # declare offsets
 pdtd14 = pd.Timedelta(14, unit="d")
@@ -29,27 +29,27 @@ cEnd = pEnd + pdtd14
 
 # ticket price limits
 stakeTpLimMax = 350
-stakeTpLimMin = 100
+stakeTpLimMin = 150
 
 # stake participation limits
-stakeSpLimMax = 75
-stakeSpLimMin = 45
+stakeSpLimMax = 70
+stakeSpLimMin = 60
 
 # pool value limits
-stakePvLimMax = 12000000
-stakePvLimMin = 6000000
+stakePvLimMax = 11000000
+stakePvLimMin = 8000000
 
 # mining axis limits
-netHashLimMax = 400000
-netHashLimMin = -100000
+netHashLimMax = 200000
+netHashLimMin = 0
 
 # TxTfrValAdjNtv daily axis limits
 netDailyTxVolNtvMax = 1000000
 netDailyTxVolNtvMin = -300000
 
 # TxTfrValAdjUSD daily axis limits
-netDailyTxVolUSDMax = 150000000
-netDailyTxVolUSDMin = -100000000
+netDailyTxVolUSDMax = 50000000
+netDailyTxVolUSDMin = -50000000
 
 # TxTfrValAdjNtv daily axis limits
 netMonthlyTxxVolNtvMax = 35000000
@@ -73,12 +73,12 @@ csppMVolMaxUSD = 2000000000
 csppMVolMinUSD = 0
 
 # cspp mixed unspent supply %
-csppMixPCNax = 70
-csppMixPCNin = 50
+csppMixPCNax = 65
+csppMixPCNin = 55
 
 # cspp mixed unspent supply DCR
-csppMixDCRNax = 10000000
-csppMixDCRNin = 7000000
+csppMixDCRNax = 10500000
+csppMixDCRNin = 7500000
 
 # cspp mixed unspent supply DCR
 dexMonthlyVolDCRMax = 600000

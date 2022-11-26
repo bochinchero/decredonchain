@@ -36,5 +36,5 @@ privacy.dailyMixUnspentDCR()
 # pie charts
 other.hashDist()
 other.nodesDist()
-other.vspDist()
-other.missedDist()
+#other.vspDist()
+#other.missedDist()

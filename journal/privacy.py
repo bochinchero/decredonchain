@@ -38,7 +38,7 @@ def dailyMixUnspentPC():
                      hEnd=cfg.pEnd,
                      hColor=colorWindow,
                      dStart=cfg.dStart,
-                     fmtAxis=charts.autoformat,
+                     fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
                      ylim=[cfg.csppMixPCNin,cfg.csppMixPCNax])
 
@@ -56,7 +56,7 @@ def dailyMixUnspentDCR():
                      hEnd=cfg.pEnd,
                      hColor=colorWindow,
                      dStart=cfg.dStart,
-                     fmtAxis=charts.autoformatMillnoDec,
+                     fmtAxis=charts.autoformatMill,
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[cfg.csppMixDCRNin,cfg.csppMixDCRNax])
 

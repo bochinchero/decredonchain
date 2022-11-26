@@ -409,11 +409,21 @@ def donutChartL(title,data,date=None,sourceStr=None,authStr=None):
     if date is not None:
         dateStr = date.strftime("%Y-%m-%d")
         if sourceStr is None:
-            sourceStr = dateStr
+            sourceStr = []
+            sourceStr.append(dateStr)
+        else:
+            if type(sourceStr) != list:
+                temp = sourceStr
+                sourceStr = []
+                sourceStr.append(temp)
+        print("Variable is a list.")
         plt.axis('equal')
         xText = -0.135
         yText = -0.11
-        plt.text(xText, yText, sourceStr, transform=ax.transAxes)
+        for i in range(len(sourceStr)):
+            if i > 0:
+                yText = yText + 0.03
+            plt.text(xText, yText, sourceStr[i], transform=ax.transAxes)
 
     if authStr is not None:
         xText = 1.0925
@@ -489,11 +499,20 @@ def donutChartS(title,data,label,date=None,sourceStr=None,authStr=None):
     if date is not None:
         dateStr = date.strftime("%Y-%m-%d")
         if sourceStr is None:
-            sourceStr = dateStr
+            sourceStr = []
+            sourceStr.append(dateStr)
+        else:
+            if type(sourceStr) != list:
+                temp = sourceStr
+                sourceStr = []
+                sourceStr.append(temp)
         plt.axis('equal')
         xText = -0.09
         yText = -0.11
-        plt.text(xText, yText, sourceStr, transform=ax.transAxes)
+        for i in range(len(sourceStr)):
+            if i > 0:
+                yText = yText + 0.03
+            plt.text(xText, yText, sourceStr[i], transform=ax.transAxes)
 
     if authStr is not None:
         xText = 0.72

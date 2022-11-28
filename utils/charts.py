@@ -346,7 +346,7 @@ def fix_labels(mylabels, tooclose=0.1, sepfactor=2):
                 mylabels[j].set_x(b[0] - sepfactor*vecs[i,j,0])
                 mylabels[j].set_y(b[1] - sepfactor*vecs[i,j,1])
 
-def donutChartL(title,data,date=None,sourceStr=None,authStr=None):
+def donutChartL(title,data,date=None,sourceStr=None,authStr=None,saveDate=None,totalRow=False):
     # calculating pct
     data['pct'] = data['values'] / data['values'].sum()
     # converting to str
@@ -431,17 +431,22 @@ def donutChartL(title,data,date=None,sourceStr=None,authStr=None):
         plt.text(xText, yText, authStr, transform=ax.transAxes,ha='right')
 
     title = title.replace("/", "")
-    saveFigure(fig, title, date=date)
+    if saveDate is None:
+        saveFigure(fig, title, date=date)
+    else:
+        saveFigure(fig, title, date=saveDate)
     return ax, fig
 
-def donutChartS(title,data,label,date=None,sourceStr=None,authStr=None):
+def donutChartS(title,data,label,date=None,sourceStr=None,authStr=None,saveDate=None,showTotal=False):
+
     # calculating pct
     data['pct'] = data['values'] / data['values'].sum()
     # converting to str
     data['pctStr'] = data['pct'].astype(float).map("{:.1%}".format)
-
+    # calculate total and map as string
+    totalStr = str(data['values'].sum())
+    # sort values array descending
     dSorted = data.sort_values(by=['values'],ascending=False)
-
     # prepare figure, title, etc.
     fig, ax = plt.subplots(figsize=(12,6.75), dpi=100)
     plt.gca().axis("equal")
@@ -478,7 +483,7 @@ def donutChartS(title,data,label,date=None,sourceStr=None,authStr=None):
                       loc='center left')
     for i in range(1,(len(dSorted)+1)):
         table.add_cell(i, -1, 0.025, 0.05)
-
+    # go through every cell to add the correct properties
     for key, cell in table._cells.items():
         if key[1] < 0:      # cells indicating the color of each wedge
             cell.set_facecolor(tColors[key[0]-1])
@@ -489,13 +494,25 @@ def donutChartS(title,data,label,date=None,sourceStr=None,authStr=None):
         if key[0] == 0:     # header cells
             cell.set_facecolor(colour_hex('dcr_grey25'))
             cell._text.set_color(colour_hex('dcr_black'))
+            cell._text.set_weight('bold')
         if (key[0] > 0) and (key[1] >= 0):  # value cells
             cell.set_facecolor('w')
         cell.set_height(0.6)
         cell.set_text_props(va="center")
+    # if the showTotal flag is on, a new row is added with the total count
+    if showTotal:
+        cell = table.add_cell(len(dSorted)+1, 0,0.5,0.6,text=('Total '+label[1]))
+        cell.set_text_props(ha="left")
+        cell.set_facecolor(colour_hex('dcr_grey15'))
+        cell._text.set_color(colour_hex('dcr_black'))
+        cell = table.add_cell(len(dSorted)+1, 1,0.15,0.6,text=totalStr)
+        cell.set_text_props(ha="right")
+        cell.set_facecolor(colour_hex('dcr_grey15'))
+        cell._text.set_color(colour_hex('dcr_black'))
 
     table.set_fontsize(12)
     table.set_rasterized(True)
+
     if date is not None:
         dateStr = date.strftime("%Y-%m-%d")
         if sourceStr is None:
@@ -520,7 +537,10 @@ def donutChartS(title,data,label,date=None,sourceStr=None,authStr=None):
         plt.text(xText, yText, authStr, transform=ax.transAxes,ha='right')
 
     title = title.replace("/", "")
-    saveFigure(fig, title, date=date)
+    if saveDate is None:
+        saveFigure(fig, title, date=date)
+    else:
+        saveFigure(fig, title, date=saveDate)
     return ax, fig
 
 def hcatBar(data,dataCol,bColour,cTitle,yLabel,fmtAxis=None,fmtAnn=None,ylim=None):

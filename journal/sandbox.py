@@ -18,3 +18,5 @@ import other
 
 other.vspDist()
 other.missedDist()
+other.nodesDist()
+other.hashDist()

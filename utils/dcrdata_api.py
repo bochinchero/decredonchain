@@ -2,6 +2,7 @@
 from decred.dcr.dcrdata import DcrdataClient
 from decred.util.helpers import mktime
 import pandas as pd
+import requests
 
 fmtt = '%Y-%m-%dT%H:%M:%S'
 
@@ -229,4 +230,46 @@ def ticketpoolsize():
     output = df[['date', 'count']].copy()
     output = output.set_index('date')
     output.index = pd.to_datetime(output.index, utc=True, format=fmtt, errors='ignore')
+    return output
+
+def treasuryLegacy(interval=None):
+    if interval is None:
+        interval='day'
+    url = 'https://explorer.dcrdata.org/api/address/Dcur2mcGjmENx4DhNqDctW5wJCVyT3Qeqkx/amountflow/'+interval
+    response = requests.get(url)
+    data = response.json()
+    # convert to dataframe
+    df = pd.read_json(url)
+    # some formatting on the time string
+    df['time'] = df['time'].str.split('T').str[0]
+    # convert time to pd date time
+    df['time'] = pd.to_datetime(df['time'], utc=True, format=fmtt, errors='ignore')
+    # rename column
+    df = df.rename(columns={"time": "date"})
+    # create cumulative balance column
+    df['balance'] = df['net'].cumsum()
+    print(df)
+    # convert price from atoms to base dcr
+    output = df
+    return output
+
+def treasury(interval=None):
+    if interval is None:
+        interval='day'
+    url = 'https://explorer.dcrdata.org/api/treasury/io/'+interval
+    response = requests.get(url)
+    data = response.json()
+    # convert to dataframe
+    df = pd.read_json(url)
+    # some formatting on the time string
+    df['time'] = df['time'].str.split('T').str[0]
+    print(df)
+    # convert time to pd date time
+    df['time'] = pd.to_datetime(df['time'], utc=True, format=fmtt, errors='ignore')
+    # rename column
+    df = df.rename(columns={"time": "date"})
+    # create cumulative balance column
+    df['balance'] = df['net'].cumsum()
+    # convert price from atoms to base dcr
+    output = df
     return output

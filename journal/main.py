@@ -1,6 +1,7 @@
 import staking
 import network
 import privacy
+import treasury
 import other
 from matplotlib import pyplot as plt
 
@@ -36,5 +37,8 @@ privacy.dailyMixUnspentDCR()
 # pie charts
 other.hashDist()
 other.nodesDist()
-#other.vspDist()
-#other.missedDist()
+other.vspDist()
+other.missedDist()
+
+# treasury charts
+treasury.monthlyBalance()

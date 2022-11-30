@@ -248,7 +248,6 @@ def treasuryLegacy(interval=None):
     df = df.rename(columns={"time": "date"})
     # create cumulative balance column
     df['balance'] = df['net'].cumsum()
-    print(df)
     # convert price from atoms to base dcr
     output = df
     return output
@@ -263,7 +262,6 @@ def treasury(interval=None):
     df = pd.read_json(url)
     # some formatting on the time string
     df['time'] = df['time'].str.split('T').str[0]
-    print(df)
     # convert time to pd date time
     df['time'] = pd.to_datetime(df['time'], utc=True, format=fmtt, errors='ignore')
     # rename column

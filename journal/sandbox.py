@@ -15,5 +15,7 @@ from datetime import date
 import json
 import networkx as nx
 import other
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 
-treasury.monthlyBalance()
+treasury.treasuryFlows()

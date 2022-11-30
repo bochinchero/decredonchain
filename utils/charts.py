@@ -320,6 +320,7 @@ def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
     xfig.autofmt_xdate(rotation=45)
     plt.tight_layout()
     saveFigure(xfig, fTitle, date=hStart)
+    return ax, fig
 
 def cmapCreate(inverse=False):
     if inverse is False:

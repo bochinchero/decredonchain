@@ -555,3 +555,57 @@ def hcatBar(data,dataCol,bColour,cTitle,yLabel,fmtAxis=None,fmtAnn=None,ylim=Non
     plt.tight_layout()
     #saveFigure(xfig, fTitle, date=hStart)
     return ax, fig
+
+def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
+               yLabel,uLabel,hStart=None,
+               dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None,
+               annPos1 =None,annPos2=None,annPos3=None):
+    if dStart is None:
+        dStart = cStart
+    ax, xfig = fig(cTitle,yLabel, None, cStart, cEnd)
+    # charting
+
+    # create colormap and apply to the axis
+    cmap = cmapCreate()
+    theme = cmap
+    ax.set_prop_cycle("color", [theme(1. * i / len(labels))
+                                 for i in range(len(labels))])
+    v_offset = None
+    for i in range(0, len(labels)):
+        vals = data.iloc[:,[i]].squeeze()
+        ax.bar(data.index,  # bar chart: pull out hte index on x
+               vals,  # bar chart: pull out the txo_count for this iteration
+               width=15,            # bar chart: bar width
+               label=labels[i],     # add bar label
+               align='center',      # horizontal alignment
+               bottom=v_offset)     # bar chart: vertical offset, calculated on each iteration on next line
+        if v_offset is None:
+            v_offset = vals
+        else:
+            v_offset += vals    # update offset for next bar
+
+    ax.yaxis.set_major_formatter(fmtAxis)
+    plt.setp(ax.xaxis.get_majorticklabels(), ha='center')
+    # create total column
+    data['totalsum'] = data.sum(axis=1)
+    if annPos1 is not None:
+        annotPos(data, 'totalsum', 1, ax, 'Up', annPos1, unitStr=uLabel, formatStr=fmtAnn)
+    if annPos2 is not None:
+        annotPos(data, 'totalsum', 2, ax, 'Up', annPos2, unitStr=uLabel, formatStr=fmtAnn)
+    if annPos3 is not None:
+        annotPos(data, 'totalsum', 3, ax, 'Up', annPos3, unitStr=uLabel, formatStr=fmtAnn)
+    #if hStart is None:
+    #    prevMax(data, 'totalsum', ax, dStart, cEnd, unitStr=uLabel, formatStr=fmtAnn)
+    #else:
+    #    prevMax(data, 'totalsum', ax, dStart, hStart, unitStr=uLabel, formatStr=fmtAnn)
+    ax.legend(loc='upper left')
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    # set monthly locator
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
+    # set formatter
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    xfig.autofmt_xdate(rotation=45)
+    plt.tight_layout()
+    saveFigure(xfig, fTitle, date=hStart)
+    return ax, fig

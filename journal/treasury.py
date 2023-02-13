@@ -47,14 +47,15 @@ def monthlyBalance():
                       annPos1=2,
                       annPos2=1)
 
-def treasuryFlows():
+
+def monthlyFlows():
     # get data from API
     tt = dcrdata_api.treasury(interval='month')
     legacy = dcrdata_api.treasuryLegacy(interval='month')
     # create date array to start
     date_rng = pd.date_range(start=cfg.dStart, end=cfg.pEnd, freq='MS')
     data = pd.DataFrame(date_rng, columns=['date'])
-
+    data.drop(data.tail(1).index, inplace=True)
     dataT = data.merge(tt, left_on='date', right_on='date', how='left')
     dataT = dataT.fillna(method='ffill')
     dataT = dataT.fillna(0)
@@ -112,12 +113,12 @@ def treasuryFlows():
     xfig.autofmt_xdate(rotation=45)
     yval = data['received'][-1]
     plt.tight_layout()
-    text = '   In: ' + '{0:.2f}'.format(yval) + ' DCR\n Out: ' \
+    text = 'In: ' + '{0:.2f}'.format(yval) + ' DCR\n Out: ' \
            + '{0:.2f}'.format(data['sent'][-1]) + ' DCR\n Net: ' \
            + '{0:.2f}'.format(data['net'][-1]) + ' DCR'
     bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
     arrowprops = dict(arrowstyle="->", connectionstyle="angle,angleA=0,angleB=90")
     kw = dict(xycoords='data', textcoords='offset points',
-              arrowprops=arrowprops, bbox=bbox_props, ha="center", va="bottom")
-    ax.annotate(text, xy=(data.index[-1], yval), xytext=(-80, 40), **kw)
+              arrowprops=arrowprops, bbox=bbox_props, ha="center", va="bottom",)
+    ax.annotate(text, xy=(data.index[-1], yval), xytext=(-80, 40), ma='right',**kw)
     charts.saveFigure(xfig, 'Treasury_Inflows_Outflows_DCR', date=cfg.pStart)

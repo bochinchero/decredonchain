@@ -116,7 +116,7 @@ def plot_secondary(data, label, colour, ax1=None, ax=None, yscale=None, lw=None,
     ax.legend()
     return ax
 
-def annotMax(df,coly, ax=None,startX=None,endX=None,pos=None,formatStr=None,unitStr=None):
+def annotMax(df,coly, ax=None,startX=None,endX=None,pos=None,formatStr=None,unitStr=None,dist=None):
     startX = pd.to_datetime(startX)
     endX = pd.to_datetime(endX)
     df.index = pd.to_datetime(df.index)
@@ -124,10 +124,18 @@ def annotMax(df,coly, ax=None,startX=None,endX=None,pos=None,formatStr=None,unit
     df = df.loc[mask]
     xmax = df.index[np.argmax(df[coly])]
     ymax = df[coly].max()
+    if dist is None:
+        dist = 100
     if pos == 'Up':
-        xytext=(0,100)
+        xytext = (0,dist)
     else:
-        xytext = (0, -100)
+        if pos == 'Left':
+            xytext = (-dist,0)
+        else:
+            if pos == 'Right':
+                xytext = (dist, 0)
+            else:
+                xytext = (0, -dist)
     if formatStr is None:
         formatStr = autoformat
     text = 'Monthly Max:\n' + str(formatStr(ymax))
@@ -142,7 +150,7 @@ def annotMax(df,coly, ax=None,startX=None,endX=None,pos=None,formatStr=None,unit
               arrowprops=arrowprops, bbox=bbox_props, ha="center", va="top")
     ax.annotate(text, xy=(xmax, ymax), xytext=xytext, **kw)
 
-def annotMin(df,coly, ax=None,startX=None,endX=None,pos=None,formatStr=None,unitStr=None):
+def annotMin(df,coly, ax=None,startX=None,endX=None,pos=None,formatStr=None,unitStr=None,dist=None):
     startX = pd.to_datetime(startX)
     endX = pd.to_datetime(endX)
     df.index = pd.to_datetime(df.index)
@@ -150,14 +158,18 @@ def annotMin(df,coly, ax=None,startX=None,endX=None,pos=None,formatStr=None,unit
     df = df.loc[mask]
     xmin = df.index[np.argmin(df[coly])]
     ymin = df[coly].min()
+    if dist is None:
+        dist = 100
     if pos == 'Up':
-        xytext = (0,100)
-    if pos == 'Left':
-        xytext = (-100,0)
-    if pos == 'Right':
-        xytext = (100, 0)
+        xytext = (0,dist)
     else:
-        xytext = (0, -100)
+        if pos == 'Left':
+            xytext = (-dist,0)
+        else:
+            if pos == 'Right':
+                xytext = (dist, 0)
+            else:
+                xytext = (0, -dist)
     if formatStr is None:
         formatStr = autoformat
     text = 'Monthly Min:\n' + str(formatStr(ymin))
@@ -392,16 +404,16 @@ def donutChartL(title,data,date=None,sourceStr=None,authStr=None,saveDate=None,t
         connectionstyle = "angle,angleA=0,angleB={}".format(ang)
         kw["arrowprops"].update({"connectionstyle": connectionstyle})
         if i == 0:
-            ifactor = 1.225
+            ifactor = 1.23
         else:
             if i == 1:
-                ifactor = 1.1
+                ifactor = 1.125
             else:
                 if i == 2:
                     ifactor = 1.05
                 else:
                     if (i % 2) == 0:
-                        ifactor = 1.125
+                        ifactor = 1.13
                     else:
                         ifactor = 1.075
         ax.annotate(legend[i], xy=(x, y), xytext=(1.25 * np.sign(x), ifactor * y),
@@ -560,23 +572,24 @@ def hcatBar(data,dataCol,bColour,cTitle,yLabel,fmtAxis=None,fmtAnn=None,ylim=Non
 def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
                yLabel,uLabel,hStart=None,
                dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None,
-               annPos1 =None,annPos2=None,annPos3=None):
+               annPos1 =None,annPos2=None,annPos3=None,bw=None):
     if dStart is None:
         dStart = cStart
     ax, xfig = fig(cTitle,yLabel, None, cStart, cEnd)
     # charting
-
+    if bw is None:
+        bw = 15
     # create colormap and apply to the axis
     cmap = cmapCreate()
     theme = cmap
-    ax.set_prop_cycle("color", [theme(1. * i / len(labels))
+    ax.set_prop_cycle("color", [theme(1. * i / (len(labels)-1))
                                  for i in range(len(labels))])
     v_offset = None
     for i in range(0, len(labels)):
         vals = data.iloc[:,[i]].squeeze()
         ax.bar(data.index,  # bar chart: pull out hte index on x
                vals,  # bar chart: pull out the txo_count for this iteration
-               width=15,            # bar chart: bar width
+               width=bw,            # bar chart: bar width
                label=labels[i],     # add bar label
                align='center',      # horizontal alignment
                bottom=v_offset)     # bar chart: vertical offset, calculated on each iteration on next line
@@ -610,3 +623,60 @@ def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
     plt.tight_layout()
     saveFigure(xfig, fTitle, date=hStart)
     return ax, fig
+
+def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
+               yLabel,uLabel,hStart=None,hEnd=None,hColor=None,
+               dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None,
+               annPos1 =None,annPos2=None,annPos3=None,annMinPos=None,annMaxPos=None):
+    # data preparation
+    cols = list(data.columns.values)
+    # initialise Y data list
+    dataY = []
+    # iterate through column name list
+    for i in range(0, len(cols)):
+        # extract column name
+        colName = cols[i]
+        # extract column values
+        colValues = data[colName].tolist()
+        # append to y data list
+        dataY.append(colValues)
+    # create a total column
+    data['total'] = data[list(data.columns)].sum(axis=1)
+    # check start date
+    if dStart is None:
+        dStart = cStart
+    # intiate chart
+    ax, xfig = fig(cTitle,yLabel, None, cStart, cEnd)
+    # colormap stuff
+    cmap = cmapCreate(inverse=True)
+    theme = cmap
+    ax.set_prop_cycle("color", [theme(1. * i / (len(labels)-1))
+                                 for i in range(0, len(labels))])
+    # chart
+    if hStart is not None and hEnd is not None:
+        ax.axvspan(hStart, hEnd, color=hColor, alpha=0.25)
+        # annotate min and max within window
+        annotMax(data, 'total', ax, hStart, hEnd,pos='Up', unitStr=uLabel,formatStr=fmtAnn,dist=annMaxPos)
+        annotMin(data, 'total', ax, hStart, hEnd,pos='Up', unitStr=uLabel,formatStr=fmtAnn,dist=annMinPos)
+    # annotate previous ATH
+    # if hStart is None:
+    #    prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel,formatStr=fmtAnn)
+    # else:
+    #    prevMax(data, dataCol, ax, dStart, hStart, unitStr=uLabel,formatStr=fmtAnn)
+    if fmtAxis is not None:
+        ax.yaxis.set_major_formatter(fmtAxis)
+    plt.stackplot(data.index, dataY, labels=labels)
+    ax.legend(loc='upper left')
+    # check ylim
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    # set monthly locator
+    # ax.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
+    # set formatter
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    xfig.autofmt_xdate(rotation=45)
+    plt.tight_layout()
+    # save figure
+    saveFigure(xfig, fTitle, date=hStart)
+    return ax, fig
+

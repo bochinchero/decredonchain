@@ -168,3 +168,51 @@ def missedDist():
     charts.donutChartS('Voting Service Provider (VSP) - Missed Ticket Distribution',vspMissed,
                                    ['Voting Service Providers','Missed'],srcDateEnd,sourceStr=fnoteList,
                        authStr='Decred Journal',saveDate=srcDateStart,showTotal=True)
+
+
+def dailyNodeDist():
+    data = snapcsv.dailyHashDist()
+    new_columns = data.columns[data.loc[data.last_valid_index()].argsort()]
+    data = data[new_columns]
+    # extract list of column names
+    labels = list(data.columns.values)
+    charts.stackedAreaPlot(data=data,
+                           labels=labels,
+                           cStart=cfg.dCsvStart,
+                           cEnd=cfg.cEnd,
+                           cTitle='Daily Hashrate Distribution (Ph/s)',
+                           fTitle='Daily_Hash_Dist',
+                           yLabel='Hashrate (Ph/s)',
+                           uLabel='PH/s',
+                           hStart=cfg.pStart,
+                           hEnd=cfg.pEnd,
+                           hColor=charts.colour_hex('dcr_grey25'),
+                           dStart=cfg.dStart,
+                           fmtAxis=charts.autoformatNoDec,
+                           fmtAnn=charts.autoformatNoDec,
+                           ylim=[0, 150],
+                           annMinPos=100,
+                           annMaxPos=100)
+
+def dailyHashDist():
+    # pull data from the gh repo
+    data = snapcsv.nodeByVer()
+    # extract list of column names
+    labels = list(data.columns.values)
+    charts.stackedAreaPlot(data=data,
+                           labels=labels,
+                           cStart=cfg.dCsvStart,
+                           cEnd=cfg.cEnd,
+                           cTitle='Daily Node Distribution',
+                           fTitle='Daily_NodeDistribution',
+                           yLabel='Node Count',
+                           uLabel='Nodes',
+                           hStart=cfg.pStart,
+                           hEnd=cfg.pEnd,
+                           hColor=charts.colour_hex('dcr_grey25'),
+                           dStart=cfg.dStart,
+                           fmtAxis=charts.autoformatNoDec,
+                           fmtAnn=charts.autoformatNoDec,
+                           ylim=[0, 250],
+                           annMinPos=150,
+                           annMaxPos=150)

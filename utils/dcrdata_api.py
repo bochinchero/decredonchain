@@ -247,7 +247,8 @@ def treasuryLegacy(interval=None):
     # rename column
     df = df.rename(columns={"time": "date"})
     # create cumulative balance column
-    df['balance'] = df['net'].cumsum()
+    df['balance'] = df['net'].shift(1).cumsum()
+    df = df.fillna(0)
     # convert price from atoms to base dcr
     output = df
     return output
@@ -267,7 +268,8 @@ def treasury(interval=None):
     # rename column
     df = df.rename(columns={"time": "date"})
     # create cumulative balance column
-    df['balance'] = df['net'].cumsum()
+    df['balance'] = df['net'].shift(1).cumsum()
+    df = df.fillna(0)
     # convert price from atoms to base dcr
     output = df
     return output

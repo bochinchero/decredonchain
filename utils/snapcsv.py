@@ -35,3 +35,24 @@ def nodeDist(date):
     data = pd.read_csv(url)
     return data
 
+def nodeByVer():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/stream/countNodesByVer.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData
+
+def dailyHashDist():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/stream/distHashrate.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData

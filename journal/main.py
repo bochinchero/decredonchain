@@ -39,6 +39,9 @@ other.hashDist()
 other.nodesDist()
 other.vspDist()
 other.missedDist()
+other.dailyNodeDist()
+other.dailyHashDist()
 
 # treasury charts
 treasury.monthlyBalance()
+treasury.monthlyFlows()

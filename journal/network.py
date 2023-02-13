@@ -24,6 +24,7 @@ def dailyHashrate():
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[cfg.netHashLimMin,cfg.netHashLimMax])
 
+
 def dailyTxTfrValAdjNtv():
     data = cm.getMetric('dcr','TxTfrValAdjNtv',cfg.dStart,cfg.dEnd)
     charts.dailyPlot(data=data,

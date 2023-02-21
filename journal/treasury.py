@@ -112,7 +112,7 @@ def monthlyFlows():
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
     xfig.autofmt_xdate(rotation=45)
     yval = data['received'][-1]
-    plt.tight_layout()
+    plt.tight_layout(pad=1.5)
     text = 'In: ' + '{0:.2f}'.format(yval) + ' DCR\n Out: ' \
            + '{0:.2f}'.format(data['sent'][-1]) + ' DCR\n Net: ' \
            + '{0:.2f}'.format(data['net'][-1]) + ' DCR'

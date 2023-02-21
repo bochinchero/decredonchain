@@ -8,6 +8,7 @@ import matplotlib.dates as mdates
 import matplotlib.colors as mcolors
 from pathlib import Path
 import datetime as dt
+import utils.chartUtils as chartUtils
 import os
 
 def has_twin(ax):
@@ -64,7 +65,6 @@ def colour_hex(colour):
 
 def fig(title,ylabel,ax=None,start=None,end=None):
     # this function creates a figure with the standard format
-
     fig = plt.figure(title,figsize=(12,6.75), dpi=100)
     fig.patch.set_facecolor(colour_hex('dcr_grey05'))
     fig.patch.set_alpha(1)
@@ -77,6 +77,9 @@ def fig(title,ylabel,ax=None,start=None,end=None):
     ax.set_facecolor(colour_hex('dcr_grey15'))
     ax.tick_params(color=colour_hex('dcr_black'), labelcolor=colour_hex('dcr_black'))
     ax.grid(color=colour_hex('dcr_grey50'), linestyle='--', linewidth=0.5)
+    xText = 0.99
+    yText = -0.15
+    plt.text(xText, yText, 'Decred Journal', transform=ax.transAxes, ha='right')
     return ax, fig
 
 
@@ -293,11 +296,15 @@ def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
         ax.yaxis.set_major_formatter(fmtAxis)
     # ax.set_ylim(cfg.stakeSpLimMin, cfg.stakeSpLimMax)
     ax.legend(loc='upper left')
-    if ylim is not None:
-        ax.set_ylim(ylim)
+    #if ylim is not None:
+    #    ax.set_ylim(ylim)
+    chartUtils.plot_autoScale(data[dataCol], ax, dateRange=[cStart, cEnd], pad=0.8)
     xfig.autofmt_xdate(rotation=45)
-    plt.tight_layout()
+    # plt.tight_layout()
+    #chartUtils.annFootnote(xfig,'Decred Journal')
+    plt.tight_layout(pad=1.5)
     saveFigure(xfig,fTitle, date=hStart)
+    return ax, xfig
 
 
 def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
@@ -330,9 +337,10 @@ def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
     # set formatter
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
     xfig.autofmt_xdate(rotation=45)
-    plt.tight_layout()
+    plt.tight_layout(pad=1.5)
+    #chartUtils.annFootnote(xfig,'Decred Journal')
     saveFigure(xfig, fTitle, date=hStart)
-    return ax, fig
+    return ax, xfig
 
 def cmapCreate(inverse=False):
     if inverse is False:
@@ -620,7 +628,7 @@ def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
     # set formatter
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
     xfig.autofmt_xdate(rotation=45)
-    plt.tight_layout()
+    plt.tight_layout(pad=1.5)
     saveFigure(xfig, fTitle, date=hStart)
     return ax, fig
 
@@ -656,8 +664,11 @@ def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
     if hStart is not None and hEnd is not None:
         ax.axvspan(hStart, hEnd, color=hColor, alpha=0.25)
         # annotate min and max within window
-        annotMax(data, 'total', ax, hStart, hEnd,pos='Up', unitStr=uLabel,formatStr=fmtAnn,dist=annMaxPos)
-        annotMin(data, 'total', ax, hStart, hEnd,pos='Up', unitStr=uLabel,formatStr=fmtAnn,dist=annMinPos)
+        chartUtils.annotFunc(data, 'total', fType='max', ax=ax, dateRange=[hStart, hEnd],
+                             pos='Up',dist=annMaxPos, unitStr=uLabel, formatStr=fmtAnn)
+        chartUtils.annotFunc(data, 'total', fType='min', ax=ax, dateRange=[hStart, hEnd],
+                             pos='Up',dist=annMinPos, unitStr=uLabel, formatStr=fmtAnn)
+
     # annotate previous ATH
     # if hStart is None:
     #    prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel,formatStr=fmtAnn)
@@ -675,8 +686,8 @@ def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
     # set formatter
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     xfig.autofmt_xdate(rotation=45)
-    plt.tight_layout()
+    plt.tight_layout(pad=1.5)
     # save figure
     saveFigure(xfig, fTitle, date=hStart)
-    return ax, fig
+    return ax, xfig
 

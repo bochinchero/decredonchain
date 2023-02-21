@@ -1,11 +1,12 @@
 import config as cfg
 import utils.charts as charts
+import utils.chartUtils as chartUtils
 import utils.snapcsv as snapcsv
 import utils.dcrdata_api as dcrdata_api
 import pandas as pd
 import utils.cm as cm
 import datetime as dt
-
+from matplotlib import pyplot as plt
 # chart start date of currnet period
 srcDateStart = cfg.pStart
 # chart end date of the current period
@@ -40,6 +41,7 @@ def vspDist():
     ticketsTot = data[data.index == srcDateEnd]['count'].sum()
     # pull vsp data
     vspRaw = snapcsv.vspDist(srcDateEnd)
+    vspRawLast = snapcsv.vspDist(srcDateStart)
     # convert last updated to pd date time, tz aware
     vspRaw['lastupdated'] = pd.to_datetime(vspRaw['lastupdated'], utc=True, errors='ignore')
     # calculate days since last update
@@ -71,6 +73,26 @@ def vspDist():
             fnoteList.append(fnoteStr)  # append entry to footnote list
             vspRaw = vspRaw.drop(index)  # drop row from dataframe
 
+    # check additions since last month
+    add_list = [x for x in list(vspRaw['id'].unique()) if x not in list(vspRawLast['id'].unique())]
+    for item in add_list:
+        fnoteCt = ''
+        for i in range(len(fnoteList)+1):
+            fnoteCt = fnoteCt + ('*')
+        fnoteStr = fnoteCt + item + ' added since last snapshot.'
+        fnoteList.append(fnoteStr)  # append entry to footnote list
+
+    # check anything removed since last month
+    sub_list = [x for x in list(vspRawLast['id'].unique()) if x not in list(vspRaw['id'].unique())]
+    for item in sub_list:
+        fnoteCt = ''
+        for i in range(len(fnoteList)+1):
+            fnoteCt = fnoteCt + ('*')
+        fnoteStr = fnoteCt + item + ' removed since last snapshot.'
+        fnoteList.append(fnoteStr)  # append entry to footnote list
+
+    #reverse list order
+    fnoteList.reverse()
     vspData = vspRaw[['id', 'voting']].copy()
     # get sum of vsp live tickets
     vspSum = vspData['voting'].sum()
@@ -141,6 +163,18 @@ def missedDist():
     vspMissedVotesEnd = vspMissedVotesEnd.set_index('id')
     # get difference between start/end dates
     vspMissed = vspMissedVotesEnd.subtract(vspMissedVotesStart, fill_value=0)
+    # remove rows for VSPs that have been removed since last snapshot
+    for index, row in vspMissed.iterrows():
+        idStr = index
+        # check if there are stale vsps below the cutoff threshold
+        if row['revoked'] < 0:
+            newStr = idStr # create updated id string
+            fnoteCt = ''
+            for i in range(len(fnoteList)+1):
+                fnoteCt = fnoteCt+ ('*')
+            vspMissed = vspMissed.drop(index)
+            fnoteStr = fnoteCt + idStr + ' removed since last snapshot.'
+            fnoteList.append(fnoteStr)
     # get sum of missed tickets by VSPs
     vspMissedSum = vspMissed['revoked'].sum()
     # drop 0 values
@@ -161,6 +195,7 @@ def missedDist():
     # source text
     missedDistStr='Data from decred.org/vsp and dcrdata.org between '\
                   + srcDateStart.strftime("%Y-%m-%d") + ' and ' + srcDateEnd.strftime("%Y-%m-%d")
+    fnoteList.reverse()
     fnoteList.append(missedDistStr) # append source string
     # generate chart for Overall Missed Ticket distribution
     charts.donutChartL('Missed Ticket Distribution',missedDist,srcDateEnd,sourceStr=fnoteList,authStr='Decred Journal',saveDate=srcDateStart)
@@ -170,13 +205,13 @@ def missedDist():
                        authStr='Decred Journal',saveDate=srcDateStart,showTotal=True)
 
 
-def dailyNodeDist():
+def dailyHashDist():
     data = snapcsv.dailyHashDist()
     new_columns = data.columns[data.loc[data.last_valid_index()].argsort()]
     data = data[new_columns]
     # extract list of column names
     labels = list(data.columns.values)
-    charts.stackedAreaPlot(data=data,
+    ax,fig = charts.stackedAreaPlot(data=data,
                            labels=labels,
                            cStart=cfg.dCsvStart,
                            cEnd=cfg.cEnd,
@@ -191,15 +226,19 @@ def dailyNodeDist():
                            fmtAxis=charts.autoformatNoDec,
                            fmtAnn=charts.autoformatNoDec,
                            ylim=[0, 150],
-                           annMinPos=100,
-                           annMaxPos=100)
+                           annMinPos=0.6,
+                           annMaxPos=0.4)
 
-def dailyHashDist():
+def dailyNodeDist():
     # pull data from the gh repo
     data = snapcsv.nodeByVer()
     # extract list of column names
     labels = list(data.columns.values)
-    charts.stackedAreaPlot(data=data,
+    # dates for the incorrect data
+    fmtt = '%Y-%m-%dT%H:%M:%S'
+    eEnd = pd.to_datetime(dt.date(int(2023), int(1), int(23)), utc=True, format=fmtt, errors='ignore')
+    eMid = pd.to_datetime(dt.date(int(2022), int(12), int(1)), utc=True, format=fmtt, errors='ignore')
+    ax, fig = charts.stackedAreaPlot(data=data,
                            labels=labels,
                            cStart=cfg.dCsvStart,
                            cEnd=cfg.cEnd,
@@ -214,5 +253,9 @@ def dailyHashDist():
                            fmtAxis=charts.autoformatNoDec,
                            fmtAnn=charts.autoformatNoDec,
                            ylim=[0, 250],
-                           annMinPos=150,
-                           annMaxPos=150)
+                           annMinPos=0.8,
+                           annMaxPos=0.2)
+    ax.axvspan(cfg.dCsvStart, eEnd, color=charts.colour_hex('dcr_orange'), alpha=0.5)
+    plt.text(eMid, 225, 'INCORRECT NODE DATA', ha='center', va='center', fontsize=14,
+             fontweight='bold',color=charts.colour_hex('dcr_orange'))
+    chartUtils.saveFigure(fig,'Daily_NodeDistribution', date=cfg.pStart)

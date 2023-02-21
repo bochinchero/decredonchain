@@ -7,8 +7,8 @@ path = '$HOME/'
 fmtt = '%Y-%m-%dT%H:%M:%S'
 
 # evaluation period
-period_start = dt.date(int(2022),int(12),int(1))
-period_end   = dt.date(int(2023),int(1),int(1))
+period_start = dt.date(int(2023),int(1),int(1))
+period_end   = dt.date(int(2023),int(2),int(1))
 
 # declare offsets
 pdtd14 = pd.Timedelta(14, unit="d")
@@ -30,12 +30,12 @@ cStart = pStart - pdtd142
 cEnd = pEnd + pdtd14
 
 # ticket price limits
-stakeTpLimMax = 350
-stakeTpLimMin = 150
+stakeTpLimMax = 550
+stakeTpLimMin = 100
 
 # stake participation limits
 stakeSpLimMax = 70
-stakeSpLimMin = 60
+stakeSpLimMin = 50
 
 # pool value limits
 stakePvLimMax = 11000000
@@ -63,11 +63,11 @@ netMonthlyTxxVolUSDMin = 0
 
 
 # cspp daily axis limits
-csppVolMax = 800000
+csppVolMax = 900000
 csppVolMin = 0
 
 # cspp monthly axis limits
-csppMVolMax = 15000000
+csppMVolMax = 16000000
 csppMVolMin = 0
 
 # cspp monthly axis limits USD

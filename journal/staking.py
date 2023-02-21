@@ -4,10 +4,10 @@ import utils.dcrdata_api as dcrdata_api
 import pandas as pd
 
 colorWindow = charts.colour_hex('dcr_green')
-
+authString = 'Decred Journal - January 2023'
 def dailyStakePart():
     data = dcrdata_api.stakepart()
-    charts.dailyPlot(data=data,
+    ax, fig = charts.dailyPlot(data=data,
                      dataCol='stakepart',
                      cStart=cfg.cStart,
                      cEnd=cfg.cEnd,
@@ -25,7 +25,7 @@ def dailyStakePart():
 
 def dailyTicketPrice():
     data = dcrdata_api.ticketprice()
-    charts.dailyPlot(data=data,
+    ax,fig = charts.dailyPlot(data=data,
                      dataCol='ticketprice',
                      cStart=cfg.cStart,
                      cEnd=cfg.cEnd,
@@ -41,9 +41,10 @@ def dailyTicketPrice():
                      fmtAnn=charts.autoformat,
                      ylim=[cfg.stakeTpLimMin, cfg.stakeTpLimMax])
 
+
 def dailyTicketPoolValue():
     data = dcrdata_api.ticketpoolval()
-    charts.dailyPlot(data=data,
+    ax, fig = charts.dailyPlot(data=data,
                      dataCol='ticketpoolval',
                      cStart=cfg.cStart,
                      cEnd=cfg.cEnd,
@@ -64,7 +65,7 @@ def monthlyMissedVotes():
     data = dcrdata_api.missedvotes()
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'missed': 'sum'})
     dataM.drop(dataM.tail(1).index, inplace=True)
-    charts.monthlyBar(data=dataM,
+    ax, fig = charts.monthlyBar(data=dataM,
                       dataCol='missed',
                       bColour='dcr_green',
                       cStart=cfg.dStart,

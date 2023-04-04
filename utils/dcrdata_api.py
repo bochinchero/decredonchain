@@ -273,3 +273,18 @@ def treasury(interval=None):
     # convert price from atoms to base dcr
     output = df
     return output
+
+def addressFlow(address,interval=None):
+    if interval is None:
+        interval='day'
+    url = 'https://explorer.dcrdata.org/api/address/'+ address + '/amountflow/'+interval
+    # convert to dataframe
+    df = pd.read_json(url)
+    # some formatting on the time string
+    df['time'] = df['time'].str.split('T').str[0]
+    # convert time to pd date time
+    df['time'] = pd.to_datetime(df['time'], utc=True, format=fmtt, errors='ignore')
+    # rename column
+    df = df.rename(columns={"time": "date"})
+    # convert price from atoms to base dcr
+    return df

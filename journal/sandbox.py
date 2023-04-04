@@ -17,55 +17,35 @@ import networkx as nx
 import other
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import staking
+import privacy
+import utils.chartUtils as chartUtils
 
-# pull data from the gh repo
-data = snapcsv.nodeByVer()
-# extract list of column names
-labels = list(data.columns.values)
-fmtt = '%Y-%m-%dT%H:%M:%S'
-startDate =pd.to_datetime(dt.date(int(2022),int(10),int(1)), utc=True, format=fmtt, errors='ignore')
-endDate =pd.to_datetime(dt.date(int(2022),int(12),int(7)), utc=True, format=fmtt, errors='ignore')
-charts.stackedAreaPlot(data=data,
-                       labels=labels,
-                       cStart=startDate,
-                       cEnd=cfg.cEnd,
-                       cTitle='Daily Node Distribution',
-                       fTitle='Daily_NodeDistribution',
-                       yLabel='Node Count',
-                       uLabel='Nodes',
-                       hStart=cfg.pStart,
-                       hEnd=cfg.pEnd,
-                       hColor=charts.colour_hex('dcr_grey25'),
-                       dStart=cfg.dStart,
-                       fmtAxis=charts.autoformatNoDec,
-                       fmtAnn=charts.autoformatNoDec,
-                       ylim=[0, 250],
-                       annMinPos=150,
-                       annMaxPos=150)
+data = dcrdata_api.ticketpoolval()
+dataCol='ticketpoolval'
+title = 'This is a new figure to test'
+ylabel = 'Y label stuff'
+fnote = ['DJ Line 1','DJ Line 2']
 
-data = snapcsv.dailyHashDist()
-new_columns = data.columns[data.loc[data.last_valid_index()].argsort()]
-data = data[new_columns]
-# extract list of column names
-labels = list(data.columns.values)
-charts.stackedAreaPlot(data=data,
-                       labels=labels,
-                       cStart=startDate,
-                       cEnd=cfg.cEnd,
-                       cTitle='Daily Hashrate Distribution (Ph/s)',
-                       fTitle='Daily_Hash_Dist',
-                       yLabel='Hashrate (Ph/s)',
-                       uLabel='PH/s',
-                       hStart=cfg.pStart,
-                       hEnd=cfg.pEnd,
-                       hColor=charts.colour_hex('dcr_grey25'),
-                       dStart=cfg.dStart,
-                       fmtAxis=charts.autoformatNoDec,
-                       fmtAnn=charts.autoformatNoDec,
-                       ylim=[0, 150],
-                       annMinPos=150,
-                       annMaxPos=150)
+# hStart = cfg.pStart
+# hEnd = cfg.pEnd
+# hColor = charts.colour_hex('dcr_green')
+# uLabel = 'DCR'
+# fmtAnn = 'MillNoDec'
+#
+# figX = chartUtils.newFig(title)
+# ax = chartUtils.axTimeSeries(figX,[cfg.cStart,cfg.cEnd],title,ylabel)
+# chartUtils.plot_primary(data[dataCol], ylabel, 'dcr_darkblue', ax, 'linear', 1.5)
+# chartUtils.annFootnote(figX,fnote,'Bottom Right')
+# chartUtils.plot_autoScale(data[dataCol],ax,dateRange=[cfg.cStart,cfg.cEnd],pad=0.8)
+# if hStart is not None and hEnd is not None:
+#     ax.axvspan(hStart, hEnd, color=hColor, alpha=0.25)
+#     # annotate min and max within window
+#     chartUtils.annotFunc(data, dataCol,fType='max', ax=ax, dateRange=[hStart, hEnd],
+#                          pos='Up', unitStr=uLabel, formatStr='MillNoDec')
+#     chartUtils.annotFunc(data, dataCol,fType='min', ax=ax, dateRange=[hStart, hEnd],
+#                          pos='Down', unitStr=uLabel, formatStr='MillNoDec')
 
-treasury.monthlyBalance()
 
-plt.show()
+privacy.monthlyVolumeDCR()
+other.dailyNodeDist()

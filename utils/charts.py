@@ -63,7 +63,7 @@ def colour_hex(colour):
     return output
 
 
-def fig(title,ylabel,ax=None,start=None,end=None):
+def fig(title,ylabel,ax=None,start=None,end=None,DJ=None):
     # this function creates a figure with the standard format
     fig = plt.figure(title,figsize=(12,6.75), dpi=100)
     fig.patch.set_facecolor(colour_hex('dcr_grey05'))
@@ -79,7 +79,8 @@ def fig(title,ylabel,ax=None,start=None,end=None):
     ax.grid(color=colour_hex('dcr_grey50'), linestyle='--', linewidth=0.5)
     xText = 0.99
     yText = -0.15
-    plt.text(xText, yText, 'Decred Journal', transform=ax.transAxes, ha='right')
+    if DJ is None:
+        plt.text(xText, yText, 'Decred Journal', transform=ax.transAxes, ha='right')
     return ax, fig
 
 
@@ -635,7 +636,7 @@ def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
 def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
                yLabel,uLabel,hStart=None,hEnd=None,hColor=None,
                dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None,
-               annPos1 =None,annPos2=None,annPos3=None,annMinPos=None,annMaxPos=None):
+               annPos1 =None,annPos2=None,annPos3=None,annMinPos=None,annMaxPos=None,legend=None):
     # data preparation
     cols = list(data.columns.values)
     # initialise Y data list
@@ -677,7 +678,8 @@ def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
     if fmtAxis is not None:
         ax.yaxis.set_major_formatter(fmtAxis)
     plt.stackplot(data.index, dataY, labels=labels)
-    ax.legend(loc='upper left')
+    if legend is None:
+        ax.legend(loc='upper left')
     # check ylim
     if ylim is not None:
         ax.set_ylim(ylim)
@@ -688,6 +690,6 @@ def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
     xfig.autofmt_xdate(rotation=45)
     plt.tight_layout(pad=1.5)
     # save figure
-    saveFigure(xfig, fTitle, date=hStart)
+    chartUtils.saveFigure(xfig, fTitle, date=hStart)
     return ax, xfig
 

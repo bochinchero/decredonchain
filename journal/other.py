@@ -253,9 +253,9 @@ def dailyNodeDist():
                            fmtAxis=charts.autoformatNoDec,
                            fmtAnn=charts.autoformatNoDec,
                            ylim=[0, 250],
-                           annMinPos=0.8,
+                           annMinPos=0.2,
                            annMaxPos=0.2)
     ax.axvspan(cfg.dCsvStart, eEnd, color=charts.colour_hex('dcr_orange'), alpha=0.5)
-    plt.text(eMid, 225, 'INCORRECT NODE DATA', ha='center', va='center', fontsize=14,
+    plt.text(eMid, 225, 'INCOMPLETE NODE DATA', ha='center', va='center', fontsize=14,
              fontweight='bold',color=charts.colour_hex('dcr_orange'))
     chartUtils.saveFigure(fig,'Daily_NodeDistribution', date=cfg.pStart)

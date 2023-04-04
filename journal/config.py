@@ -7,8 +7,8 @@ path = '$HOME/'
 fmtt = '%Y-%m-%dT%H:%M:%S'
 
 # evaluation period
-period_start = dt.date(int(2023),int(1),int(1))
-period_end   = dt.date(int(2023),int(2),int(1))
+period_start = dt.date(int(2023),int(2),int(1))
+period_end   = dt.date(int(2023),int(3),int(1))
 
 # declare offsets
 pdtd14 = pd.Timedelta(14, unit="d")

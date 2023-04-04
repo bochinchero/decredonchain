@@ -282,7 +282,7 @@ def saveFigure(figx, figTitle, path=None,date=None):
     plt.close(figx)
 
 
-def plot_primary(data, label, colour, ax=None, yscale=None, lw=None, **kwarg):
+def plot_primary(data, label, colour, ax=None, yscale=None, lw=None,legloc=None, **kwarg):
     # if no axis is defined as aan input argument
     # Get the current Axes instance on the current figure matching the given keyword args, or create one.
     if ax is None:
@@ -293,9 +293,10 @@ def plot_primary(data, label, colour, ax=None, yscale=None, lw=None, **kwarg):
     # if the line width is not set, default to 1
     if lw is None:
         lw = 1
-    ax.plot(data, color=colour_hex(colour),label=label,linewidth=lw)
+    ax.plot(data, color=colour_hex(colour),label=label,linewidth=lw,zorder=20)
     ax.set_yscale(yscale)
-    ax.legend()
+    if legloc is not None:
+        ax.legend(loc=legloc)
     return
 
 def has_twin(ax):
@@ -306,7 +307,7 @@ def has_twin(ax):
             return True
     return False
 
-def plot_secondary(data, label, colour, ax1=None, ax=None, yscale=None, lw=None, **kwarg):
+def plot_secondary(data, label, colour, ax1=None, ax=None, yscale=None, lw=None,legloc=None,**kwarg):
     # if no axis is defined as aan input argument
     # Get the current Axes instance on the current figure matching the given keyword args, or create one.
     if ax1 is None:
@@ -322,7 +323,8 @@ def plot_secondary(data, label, colour, ax1=None, ax=None, yscale=None, lw=None,
         lw = 1
     ax.plot(data, color=colour_hex(colour),label=label,linewidth=lw)
     ax.set_yscale(yscale)
-    ax.legend()
+    if legloc is not None:
+        ax.legend(loc=legloc)
     return ax
 
 def plot_autoScale(data,ax,dateRange,pad=None,minOverride=None):

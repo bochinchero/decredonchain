@@ -81,4 +81,47 @@ def monthlyMissedVotes():
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[0, 2000],
                       annPos1=6,
-                      annPos2=3)
+                      annPos2=4)
+
+def monthlyTicketVolume():
+    # grab the missed votes from dcrdata
+    data = dcrdata_api.ticketCount()
+    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'count': 'sum'})
+    dataM.drop(dataM.tail(1).index, inplace=True)
+    ax, fig = charts.monthlyBar(data=dataM,
+                      dataCol='count',
+                      bColour='dcr_green',
+                      cStart=cfg.dStart,
+                      cEnd=cfg.pEnd,
+                      cTitle='Staking - Monthly Ticket Purchased',
+                      fTitle='Staking_Monthly_Ticket_Purchased',
+                      yLabel='Purchased Tickets',
+                      uLabel='Tickets',
+                      hStart=cfg.pStart,
+                      hColor=colorWindow,
+                      dStart=cfg.dStart,
+                      fmtAxis=charts.autoformatMillnoDec,
+                      fmtAnn=charts.autoformatNoDec,
+                      ylim=[0, 80000],
+                      annPos1=3,
+                      annPos2=2)
+
+def dailyTicketsBought():
+    data = dcrdata_api.ticketCount()
+    print(data)
+    dataM = data.groupby(pd.Grouper(freq='D')).agg({'count': 'sum'})
+    print(dataM)
+    ax, fig = charts.dailyPlot(data=dataM,
+                     dataCol='count',
+                     cStart=cfg.cStart,
+                     cEnd=cfg.cEnd,
+                     cTitle='Staking - Tickets Purchased',
+                     fTitle='Staking_Daily_Tickets_Purchased',
+                                uLabel='Tickets',
+                     hStart=cfg.pStart,
+                     hEnd=cfg.pEnd,
+                     hColor=colorWindow,
+                     dStart=cfg.dStart,
+                     fmtAxis=charts.autoformatNoDec,
+                     fmtAnn=charts.autoformatNoDec,
+                     ylim=[0,8000])

@@ -56,3 +56,38 @@ def dailyHashDist():
     # set index
     fData = fData.set_index('date')
     return fData
+
+def dailynodesLN():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/stream/countLNNodes.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData
+
+def dailychannelsLN():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/stream/countLNChannels.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData
+
+def dailycapacityLN():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrsnapcsv/main/data/stream/sumLNCapacity.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # change capacity units to DCR from atoms
+    fData['sumLNCapacity'] =  fData['sumLNCapacity'] / 100000000
+    # set index
+    fData = fData.set_index('date')
+    return fData

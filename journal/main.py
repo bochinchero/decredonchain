@@ -3,6 +3,8 @@ import network
 import privacy
 import treasury
 import other
+import time
+import lightning
 from matplotlib import pyplot as plt
 
 # this routine just calls the other scripts to plot each individual chart
@@ -17,14 +19,14 @@ staking.dailyTicketPoolValue()
 staking.monthlyMissedVotes()
 
 # network
-
 network.dailyHashrate()
 network.dailyTxTfrValAdjNtv()
-network.dailyTxTfrValAdjUSD()
 network.monthlyTxTfrValAdjNtv()
+network.dailyTxTfrValAdjUSD()
 network.monthlyTxTfrValAdjUSD()
-network.monthlydexVolDCR()
 network.monthlydexVolUSD()
+network.monthlydexVolDCR()
+
 
 # privacy
 
@@ -45,3 +47,9 @@ other.dailyHashDist()
 # treasury charts
 treasury.monthlyBalance()
 treasury.monthlyFlows()
+treasury.monthlyBalanceUSD()
+
+# lightning charts
+lightning.dailyChannels()
+lightning.dailyNodes()
+lightning.dailyCapacity()

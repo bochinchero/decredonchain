@@ -274,18 +274,22 @@ def saveFigure(figx, figTitle, path=None,date=None):
 
 def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
                yLabel,uLabel,hStart=None,hEnd=None,
-               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None):
+               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None,annDist=None):
     # if there is no data start specified, used the chart start
     if dStart is None:
         dStart = cStart
     # create a new axis and figure
     ax, xfig = fig(cTitle, yLabel, None, cStart, cEnd)
+    if annDist is None:
+        annDist = 0.2
     # highlight period for this month
     if hStart is not None and hEnd is not None:
         ax.axvspan(hStart, hEnd, color=hColor, alpha=0.25)
         # annotate min and max within window
-        annotMax(data, dataCol, ax, hStart, hEnd, 'Up', unitStr=uLabel,formatStr=fmtAnn)
-        annotMin(data, dataCol, ax, hStart, hEnd, unitStr=uLabel,formatStr=fmtAnn)
+        chartUtils.annotFunc(data, dataCol, fType='max',ax=ax, dateRange=[hStart,hEnd],
+                             pos='Up',formatStr=fmtAnn,unitStr=uLabel,dist=annDist)
+        chartUtils.annotFunc(data, dataCol, fType='min',ax=ax, dateRange=[hStart,hEnd],
+                             pos='Down',formatStr=fmtAnn,unitStr=uLabel,dist=annDist)
     # annotate previous ATH
     if hStart is None:
         prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel,formatStr=fmtAnn)
@@ -297,9 +301,10 @@ def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
         ax.yaxis.set_major_formatter(fmtAxis)
     # ax.set_ylim(cfg.stakeSpLimMin, cfg.stakeSpLimMax)
     ax.legend(loc='upper left')
-    #if ylim is not None:
-    #    ax.set_ylim(ylim)
-    chartUtils.plot_autoScale(data[dataCol], ax, dateRange=[cStart, cEnd], pad=0.8)
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    else:
+        chartUtils.plot_autoScale(data[dataCol], ax, dateRange=[cStart, cEnd], pad=0.8)
     xfig.autofmt_xdate(rotation=45)
     # plt.tight_layout()
     #chartUtils.annFootnote(xfig,'Decred Journal')

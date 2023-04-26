@@ -4,6 +4,7 @@ import utils.dcrdata_api as dcrdata_api
 import pandas as pd
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import utils.cm as cm
 
 def monthlyBalance():
     # get data from API
@@ -122,3 +123,49 @@ def monthlyFlows():
               arrowprops=arrowprops, bbox=bbox_props, ha="center", va="bottom",)
     ax.annotate(text, xy=(data.index[-1], yval), xytext=(-80, 40), ma='right',**kw)
     charts.saveFigure(xfig, 'Treasury_Inflows_Outflows_DCR', date=cfg.pStart)
+
+def monthlyBalanceUSD():
+    # get data from API
+    treasury = dcrdata_api.treasury(interval='month')
+    legacy = dcrdata_api.treasuryLegacy(interval='month')
+    PriceUSD = cm.getMetric('dcr', 'PriceUSD', cfg.dStart, cfg.dEnd)
+    # create date array to start
+    date_rng = pd.date_range(start=cfg.dStart, end=cfg.pEnd, freq='MS')
+    data = pd.DataFrame(date_rng, columns=['date'])
+    # rename and pick out data from df for decentralised treasury
+    dataTreasury = treasury[['date', 'balance']].copy()
+    dataTreasury = dataTreasury.rename(columns={"balance": "treasury"})
+    # rename and pick out data from df for legacy treasury
+    dataLegacy = legacy[['date', 'balance']].copy()
+    dataLegacy = dataLegacy.rename(columns={"balance": "legacy"})
+    # merge into a single df
+    data = data.merge(dataLegacy, left_on='date', right_on='date', how='left')
+    data = data.merge(dataTreasury, left_on='date', right_on='date', how='left')
+    data = data.merge(PriceUSD, left_on='date', right_on='date', how='left')
+    pd.set_option('display.max_rows', None)
+    # handle the NAs for both columns
+    data['legacy'] = data['legacy'].fillna(method='ffill')
+    data['treasury'] = data['treasury'].fillna(method='ffill')
+    data = data.fillna(0)
+    data['BalanceUSD'] = (data['legacy'] + data['treasury']) * data['PriceUSD']
+    # create label list for legend
+    labels = ['Legacy Treasury','Decentralized Treasury']
+    # set index
+    data = data.set_index('date')
+    # plot
+    charts.monthlyBar(data=data,
+                      dataCol='BalanceUSD',
+                      bColour='dcr_green',
+                      cStart=cfg.dStart,
+                      cEnd=cfg.cEnd,
+                      cTitle='Treasury - Monthly Balance (USD)',
+                      fTitle='Treasury_Monthly_Balance_USD',
+                      yLabel='Monthly Balance (USD)',
+                      uLabel='USD',
+                      hStart=cfg.pStart,
+                      dStart=cfg.dStart,
+                      fmtAxis=charts.autoformatNoDec,
+                      fmtAnn=charts.autoformatNoDec,
+                      ylim=[0, 150000000],
+                      annPos1=6.5,
+                      annPos2=4)

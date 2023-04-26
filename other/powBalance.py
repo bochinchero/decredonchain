@@ -85,8 +85,8 @@ def eventsVL(ax):
     i = 0
     for dateX in mLaunch:
         pddate = pd.to_datetime(dateX, utc=True, format=fmtt, errors='ignore')
+        i = i + 1
         if (pddate < dEnd and pddate > dStart):
-            i = i + 1
             ax.axvline(dateX, color=charts.colour_hex('dcr_orange'),alpha=0.25)
             dist = 0
             if tf == 'all':
@@ -113,7 +113,8 @@ for addr in addrList:
     # set NAs to 0
     dataAddr = dataAddr.fillna(0)
     # calculate the cumsum shfited by 1 to get a running balance
-    dataAddr[addr] = dataAddr['net'].shift(1).cumsum().clip(lower=0)
+    #dataAddr[addr] = dataAddr['net'].shift(1).cumsum().clip(lower=0)
+    dataAddr[addr] = dataAddr['sent']
     # set NAs to 0 - should only be the first value
     dataAddr = dataAddr.fillna(0)
     # remove other columns

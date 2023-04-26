@@ -50,6 +50,25 @@ def vspDist():
     dayLimit = 7
     # create footnote list
     fnoteList = []
+
+    # check additions since last month
+    add_list = [x for x in list(vspRaw['id'].unique()) if x not in list(vspRawLast['id'].unique())]
+    for item in add_list:
+        fnoteCt = ''
+        for i in range(len(fnoteList)+1):
+            fnoteCt = fnoteCt + ('*')
+        fnoteStr = fnoteCt + item + ' added since last snapshot.'
+        fnoteList.append(fnoteStr)  # append entry to footnote list
+
+    # check anything removed since last month
+    sub_list = [x for x in list(vspRawLast['id'].unique()) if x not in list(vspRaw['id'].unique())]
+    for item in sub_list:
+        fnoteCt = ''
+        for i in range(len(fnoteList)+1):
+            fnoteCt = fnoteCt + ('*')
+        fnoteStr = fnoteCt + item + ' removed since last snapshot.'
+        fnoteList.append(fnoteStr)  # append entry to footnote list
+
     # update rows for VSPs that are only slightly out of date
     for index, row in vspRaw.iterrows():
         idStr = row['id']
@@ -72,24 +91,6 @@ def vspDist():
             fnoteStr = fnoteCt + idStr + ' removed due to stale data, last updated on ' + lastUpdateStr + " (" + ticketCountStr + ' live tickets).'
             fnoteList.append(fnoteStr)  # append entry to footnote list
             vspRaw = vspRaw.drop(index)  # drop row from dataframe
-
-    # check additions since last month
-    add_list = [x for x in list(vspRaw['id'].unique()) if x not in list(vspRawLast['id'].unique())]
-    for item in add_list:
-        fnoteCt = ''
-        for i in range(len(fnoteList)+1):
-            fnoteCt = fnoteCt + ('*')
-        fnoteStr = fnoteCt + item + ' added since last snapshot.'
-        fnoteList.append(fnoteStr)  # append entry to footnote list
-
-    # check anything removed since last month
-    sub_list = [x for x in list(vspRawLast['id'].unique()) if x not in list(vspRaw['id'].unique())]
-    for item in sub_list:
-        fnoteCt = ''
-        for i in range(len(fnoteList)+1):
-            fnoteCt = fnoteCt + ('*')
-        fnoteStr = fnoteCt + item + ' removed since last snapshot.'
-        fnoteList.append(fnoteStr)  # append entry to footnote list
 
     #reverse list order
     fnoteList.reverse()
@@ -147,17 +148,23 @@ def missedDist():
     for index, row in vspDataEnd.iterrows():
         idStr = row['id']
         # check if there are stale vsps below the cutoff threshold
-        if row['daysSinceUpdate'] > 0:
+        if (row['daysSinceUpdate'] > 0):
             lastUpdateStr = str(row['lastupdated'].date())
             newStr = idStr # create updated id string
             fnoteCt = ''
             for i in range(len(fnoteList)+1):
                 fnoteCt = fnoteCt+ ('*')
             newStr = newStr + fnoteCt
-            vspDataEnd.at[index, 'id'] = newStr  # update id string in dataframe
-            vspMissedVotesStart.at[index, 'id'] = newStr  # update id string in dataframe
-            fnoteStr = fnoteCt + 'Incomplete data for ' + idStr + ', last update on ' + lastUpdateStr + '.'
+            if row['lastupdated'].date() < srcDateStart.date():
+                vspDataEnd = vspDataEnd.drop(index)
+                vspMissedVotesStart = vspMissedVotesStart.drop(index)
+                fnoteStr = fnoteCt + idStr + ' removed due to stale data, last updated on ' + lastUpdateStr + "."
+            else:
+                vspDataEnd.at[index, 'id'] = newStr  # update id string in dataframe
+                vspMissedVotesStart.at[index, 'id'] = newStr  # update id string in dataframe
+                fnoteStr = fnoteCt + 'Incomplete data for ' + idStr + ', last update on ' + lastUpdateStr + '.'
             fnoteList.append(fnoteStr)
+
     vspMissedVotesEnd = vspDataEnd[['id', 'revoked']].copy()
     vspMissedVotesStart = vspMissedVotesStart.set_index('id')
     vspMissedVotesEnd = vspMissedVotesEnd.set_index('id')

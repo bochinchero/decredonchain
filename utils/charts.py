@@ -273,8 +273,8 @@ def saveFigure(figx, figTitle, path=None,date=None):
     figx.savefig(path_3, dpi=160)
 
 def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
-               yLabel,uLabel,hStart=None,hEnd=None,
-               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None,annDist=None):
+               yLabel,uLabel=None,hStart=None,hEnd=None,
+               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,annDist=None,disATH=None):
     # if there is no data start specified, used the chart start
     if dStart is None:
         dStart = cStart
@@ -291,10 +291,11 @@ def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
         chartUtils.annotFunc(data, dataCol, fType='min',ax=ax, dateRange=[hStart,hEnd],
                              pos='Down',formatStr=fmtAnn,unitStr=uLabel,dist=annDist)
     # annotate previous ATH
-    if hStart is None:
-        prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel,formatStr=fmtAnn)
-    else:
-        prevMax(data, dataCol, ax, dStart, hStart, unitStr=uLabel,formatStr=fmtAnn)
+    if disATH is None:
+        if hStart is None:
+            prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel,formatStr=fmtAnn)
+        else:
+            prevMax(data, dataCol, ax, dStart, hStart, unitStr=uLabel,formatStr=fmtAnn)
     # plot the metric
     plot_primary(data[dataCol], yLabel, 'dcr_darkblue', ax, 'linear', 1.5)
     if fmtAxis is not None:
@@ -314,9 +315,9 @@ def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
 
 
 def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
-               yLabel,uLabel,hStart=None,
+               yLabel,uLabel=None,hStart=None,
                hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None,
-               annPos1 =None,annPos2=None,annPos3=None):
+               annPos1 =None,annPos2=None,annPos3=None,disATH=None):
     if dStart is None:
         dStart = cStart
     ax, xfig = fig(cTitle,yLabel, None, cStart, cEnd)
@@ -331,10 +332,11 @@ def monthlyBar(data,dataCol,bColour,cStart,cEnd,cTitle,fTitle,
         annotPos(data, dataCol, 2, ax, 'Up', annPos2, unitStr=uLabel, formatStr=fmtAnn)
     if annPos3 is not None:
         annotPos(data, dataCol, 3, ax, 'Up', annPos3, unitStr=uLabel, formatStr=fmtAnn)
-    if hStart is None:
-        prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel, formatStr=fmtAnn)
-    else:
-        prevMax(data, dataCol, ax, dStart, hStart, unitStr=uLabel, formatStr=fmtAnn)
+    if disATH is None:
+        if hStart is None:
+            prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel, formatStr=fmtAnn)
+        else:
+            prevMax(data, dataCol, ax, dStart, hStart, unitStr=uLabel, formatStr=fmtAnn)
     ax.legend(loc='upper left')
     if ylim is not None:
         ax.set_ylim(ylim)

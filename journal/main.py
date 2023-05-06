@@ -26,7 +26,12 @@ network.dailyTxTfrValAdjUSD()
 network.monthlyTxTfrValAdjUSD()
 network.monthlydexVolUSD()
 network.monthlydexVolDCR()
-
+network.monthlyfeesDCR()
+network.monthlyTxCount()
+network.dailytxCount()
+network.dailyBlockSize()
+network.monthlyBlockSize()
+network.monthlyblockchainSize()
 
 # privacy
 

@@ -7,7 +7,7 @@ import pandas as pd
 import utils.cm as cm
 import datetime as dt
 from matplotlib import pyplot as plt
-
+import utils.stats
 
 # chart start date of current period
 srcDateStart = cfg.pStart
@@ -17,6 +17,7 @@ srcDateEnd = cfg.pEnd
 colorWindow = charts.colour_hex('dcr_altblue')
 def dailyCapacity():
     data = snapcsv.dailycapacityLN()
+    utils.stats.windwoStats('lnCapacity',cfg.pStart,cfg.pEnd,data,'sumLNCapacity','DCR')
     ax, fig = charts.dailyPlot(data=data,
                      dataCol='sumLNCapacity',
                      cStart=cfg.cStart,
@@ -36,6 +37,7 @@ def dailyCapacity():
 
 def dailyChannels():
     data = snapcsv.dailychannelsLN()
+    utils.stats.windwoStats('lnChannels',cfg.pStart,cfg.pEnd,data,'countLNChannels','chCount')
     ax, fig = charts.dailyPlot(data=data,
                      dataCol='countLNChannels',
                      cStart=cfg.cStart,
@@ -50,11 +52,12 @@ def dailyChannels():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
-                     ylim=[0, 500],
+                     ylim=[0, 800],
                      annDist=0.25)
 
 def dailyNodes():
     data = snapcsv.dailynodesLN()
+    utils.stats.windwoStats('lnNodes',cfg.pStart,cfg.pEnd,data,'countLNNodes','Nodes')
     ax, fig = charts.dailyPlot(data=data,
                      dataCol='countLNNodes',
                      cStart=cfg.cStart,

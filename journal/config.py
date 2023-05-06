@@ -34,24 +34,24 @@ stakeTpLimMax = 550
 stakeTpLimMin = 100
 
 # stake participation limits
-stakeSpLimMax = 70
-stakeSpLimMin = 50
+stakeSpLimMax = 75
+stakeSpLimMin = 55
 
 # pool value limits
-stakePvLimMax = 11000000
+stakePvLimMax = 12000000
 stakePvLimMin = 8000000
 
 # mining axis limits
-netHashLimMax = 200000
+netHashLimMax = 150000
 netHashLimMin = 0
 
 # TxTfrValAdjNtv daily axis limits
-netDailyTxVolNtvMax = 1000000
-netDailyTxVolNtvMin = -300000
+netDailyTxVolNtvMax = 1500000
+netDailyTxVolNtvMin = 0
 
 # TxTfrValAdjUSD daily axis limits
-netDailyTxVolUSDMax = 50000000
-netDailyTxVolUSDMin = -50000000
+netDailyTxVolUSDMax = 30000000
+netDailyTxVolUSDMin = 0
 
 # TxTfrValAdjNtv daily axis limits
 netMonthlyTxxVolNtvMax = 35000000
@@ -75,12 +75,12 @@ csppMVolMaxUSD = 2000000000
 csppMVolMinUSD = 0
 
 # cspp mixed unspent supply %
-csppMixPCNax = 65
-csppMixPCNin = 55
+csppMixPCNax = 70
+csppMixPCNin = 50
 
 # cspp mixed unspent supply DCR
-csppMixDCRNax = 10500000
-csppMixDCRNin = 7500000
+csppMixDCRNax = 12000000
+csppMixDCRNin = 6000000
 
 # cspp mixed unspent supply DCR
 dexMonthlyVolDCRMax = 600000

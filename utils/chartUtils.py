@@ -176,9 +176,9 @@ def annotFunc(df,coly, fType=None,ax=None,dateRange=None,pos=None,formatStr=None
         formatStr = autoFMT
     # create text string
     if fType == 'max':
-        text = 'Monthly Max:\n' + str(autoFMT(yval,unit='MillNoDec'))
+        text = 'Monthly Max:\n' + str(formatStr(yval))
     elif fType == 'min':
-        text = 'Monthly Min:\n' + str(autoFMT(yval,unit='MillNoDec'))
+        text = 'Monthly Min:\n' + str(formatStr(yval))
     if unitStr is not None:
         text += ' ' + unitStr
     text += '\n' + xval.strftime("%Y-%m-%d")

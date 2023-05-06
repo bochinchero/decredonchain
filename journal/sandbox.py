@@ -19,6 +19,7 @@ import other
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import staking
+import network
 import privacy
 import utils.chartUtils as chartUtils
 import config as cfg
@@ -28,6 +29,4 @@ import utils.cm as cm
 import pandas as pd
 # Create a dcrdata client and grab the daily dex volume
 
-lightning.dailyCapacity()
-lightning.dailyNodes()
-lightning.dailyChannels()
+network.dailyTxTfrValAdjUSD()

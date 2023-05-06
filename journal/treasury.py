@@ -5,6 +5,8 @@ import pandas as pd
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import utils.cm as cm
+import utils.stats
+
 
 def monthlyBalance():
     # get data from API
@@ -32,6 +34,8 @@ def monthlyBalance():
     # set index
     data = data.set_index('date')
     # plot
+    utils.stats.windwoStats('tBalanceLegacyDCR',cfg.pStart,cfg.pEnd,data,'legacy','DCR')
+    utils.stats.windwoStats('tBalanceDCR',cfg.pStart,cfg.pEnd,data,'treasury','DCR')
     charts.monthlyBarStacked(data=data,
                       labels=labels,
                       cStart=cfg.dStart,
@@ -152,6 +156,7 @@ def monthlyBalanceUSD():
     labels = ['Legacy Treasury','Decentralized Treasury']
     # set index
     data = data.set_index('date')
+    utils.stats.windwoStats('tBalanceUSD',cfg.pStart,cfg.pEnd,data,'BalanceUSD','USD')
     # plot
     charts.monthlyBar(data=data,
                       dataCol='BalanceUSD',

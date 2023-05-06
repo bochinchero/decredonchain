@@ -172,6 +172,22 @@ def blocksize():
     output.index = pd.to_datetime(output.index, utc=True, format=fmtt, errors='ignore')
     return output
 
+
+def BlockchainSize():
+    # Create a dcrdata client and grab the block size per day
+    dcrdata = DcrdataClient("https://dcrdata.decred.org")
+    size = dcrdata.chart("blockchain-size")
+    # convert to from json dict to data frame
+    df = pd.DataFrame(size)
+    # convert time since epoch to datetime
+    df['date'] = pd.to_datetime(df['t'],unit='s')
+    df['size'] = df['size']/1000000
+    # convert price from atoms to base dcr
+    output = df[['date', 'size']].copy()
+    output = output.set_index('date')
+    output.index = pd.to_datetime(output.index, utc=True, format=fmtt, errors='ignore')
+    return output
+
 def hashrate():
     # Create a dcrdata client and grab the hashrate
     dcrdata = DcrdataClient("https://dcrdata.decred.org")

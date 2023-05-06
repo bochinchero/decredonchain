@@ -3,11 +3,13 @@ import utils.charts as charts
 import utils.dcrdata_api as dcrdata_api
 import pandas as pd
 import utils.cm as cm
+import utils.stats
 
 colorWindow = charts.colour_hex('dcr_orange')
 
 def dailyVolume():
     data = dcrdata_api.privacypart()
+    utils.stats.windwoStats('PrivacyVol',cfg.pStart,cfg.pEnd,data,'PrivacyVol','DCR')
     charts.dailyPlot(data=data,
                      dataCol='PrivacyVol',
                      cStart=cfg.cStart,
@@ -26,6 +28,7 @@ def dailyVolume():
 
 def dailyMixUnspentPC():
     data = dcrdata_api.anonimityset()
+    utils.stats.windwoStats('PrivacyMixedPC',cfg.pStart,cfg.pEnd,data,'mixedpc','%')
     charts.dailyPlot(data=data,
                      dataCol='mixedpc',
                      cStart=cfg.cStart,
@@ -40,10 +43,12 @@ def dailyMixUnspentPC():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
-                     ylim=[cfg.csppMixPCNin,cfg.csppMixPCNax])
+                     ylim=[cfg.csppMixPCNin,cfg.csppMixPCNax],
+                     annDist=0.05)
 
 def dailyMixUnspentDCR():
     data = dcrdata_api.anonimityset()
+    utils.stats.windwoStats('PrivacyMixedDCR',cfg.pStart,cfg.pEnd,data,'anonymitySet','DCR')
     charts.dailyPlot(data=data,
                      dataCol='anonymitySet',
                      cStart=cfg.cStart,
@@ -58,8 +63,8 @@ def dailyMixUnspentDCR():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatMill,
                      fmtAnn=charts.autoformatNoDec,
-                     ylim=[cfg.csppMixDCRNin,cfg.csppMixDCRNax])
-
+                     ylim=[cfg.csppMixDCRNin,cfg.csppMixDCRNax],
+                     annDist=0.1)
 
 
 def monthlyVolumeDCR():
@@ -90,6 +95,7 @@ def monthlyVolumeUSD():
     data = data.merge(PriceUSD, left_on='date', right_on='date', how='left')
     data['PrivacyVolUSD'] = data.PrivacyVol * data.PriceUSD
     data = data.drop(columns=['PrivacyVol', 'PriceUSD'])
+    utils.stats.windwoStats('PrivacyVolUSD',cfg.pStart,cfg.pEnd,data,'PrivacyVolUSD','USD')
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'PrivacyVolUSD': 'sum'})
     dataM.drop(dataM.tail(1).index, inplace=True)
     charts.monthlyBar(data=dataM,

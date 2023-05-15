@@ -26,7 +26,10 @@ import config as cfg
 import utils.charts as charts
 import utils.dcrdata_api as dcrdata_api
 import utils.cm as cm
+import utils.stats
 import pandas as pd
 # Create a dcrdata client and grab the daily dex volume
 
-network.dailyTxTfrValAdjUSD()
+# pull data from the gh repo
+data = snapcsv.nodeByVer()
+

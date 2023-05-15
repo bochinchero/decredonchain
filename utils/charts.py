@@ -271,6 +271,8 @@ def saveFigure(figx, figTitle, path=None,date=None):
     figx.savefig(path_1, dpi=100)
     figx.savefig(path_2, dpi=60)
     figx.savefig(path_3, dpi=160)
+    plt.close('all')
+
 
 def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
                yLabel,uLabel=None,hStart=None,hEnd=None,

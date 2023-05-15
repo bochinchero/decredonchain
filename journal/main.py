@@ -53,6 +53,7 @@ other.dailyHashDist()
 treasury.monthlyBalance()
 treasury.monthlyFlows()
 treasury.monthlyBalanceUSD()
+treasury.tStats()
 
 # lightning charts
 lightning.dailyChannels()

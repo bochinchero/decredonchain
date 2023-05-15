@@ -71,7 +71,7 @@ def dailyTicketPoolValue():
 def monthlyMissedVotes():
     # grab the missed votes from dcrdata
     data = dcrdata_api.missedvotes()
-    utils.stats.windwoStats('missedVotes',cfg.pStart,cfg.pEnd,data,'missed','votes')
+    utils.stats.windwoStats('missedVotes',cfg.pStart,cfg.pEnd,data,'missed','votes',sumReq=True)
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'missed': 'sum'})
     dataM.drop(dataM.tail(1).index, inplace=True)
     ax, fig = charts.monthlyBar(data=dataM,
@@ -95,7 +95,7 @@ def monthlyMissedVotes():
 def monthlyTicketVolume():
     # grab the missed votes from dcrdata
     data = dcrdata_api.ticketCount()
-    utils.stats.windwoStats('ticketCount',cfg.pStart,cfg.pEnd,data,'count','tickets')
+    utils.stats.windwoStats('ticketCount',cfg.pStart,cfg.pEnd,data,'count','tickets',sumReq=True)
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'count': 'sum'})
     dataM.drop(dataM.tail(1).index, inplace=True)
     ax, fig = charts.monthlyBar(data=dataM,

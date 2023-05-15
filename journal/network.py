@@ -29,7 +29,7 @@ def dailyHashrate():
 
 def dailyTxTfrValAdjNtv():
     data = cm.getMetric('dcr','TxTfrValAdjNtv',cfg.dStart,cfg.dEnd)
-    utils.stats.windwoStats('TxTfrValAdjNtv',cfg.pStart,cfg.pEnd,data,'TxTfrValAdjNtv','DCR')
+    utils.stats.windwoStats('TxTfrValAdjNtv',cfg.pStart,cfg.pEnd,data,'TxTfrValAdjNtv','DCR',sumReq=True)
     charts.dailyPlot(data=data,
                      dataCol='TxTfrValAdjNtv',
                      cStart=cfg.cStart,
@@ -50,7 +50,7 @@ def dailyTxTfrValAdjNtv():
 
 def dailyTxTfrValAdjUSD():
     data = cm.getMetric('dcr','TxTfrValAdjUSD',cfg.dStart,cfg.dEnd)
-    utils.stats.windwoStats('TxTfrValAdjUSD',cfg.pStart,cfg.pEnd,data,'TxTfrValAdjUSD','USD')
+    utils.stats.windwoStats('TxTfrValAdjUSD',cfg.pStart,cfg.pEnd,data,'TxTfrValAdjUSD','USD',sumReq=True)
     charts.dailyPlot(data=data,
                      dataCol='TxTfrValAdjUSD',
                      cStart=cfg.cStart,
@@ -115,7 +115,7 @@ def monthlyTxTfrValAdjUSD():
 
 def monthlydexVolDCR():
     data = dcrdata_api.dcrdex()
-    utils.stats.windwoStats('dexVolumeDCR',cfg.pStart,cfg.pEnd,data,'vol','DCR')
+    utils.stats.windwoStats('dexVolumeDCR',cfg.pStart,cfg.pEnd,data,'vol','DCR',sumReq=True)
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'vol': 'sum'})
     dataM.drop(dataM.tail(1).index, inplace=True)
     charts.monthlyBar(data=dataM,
@@ -142,7 +142,7 @@ def monthlydexVolUSD():
     data = data.merge(PriceUSD, left_on='date', right_on='date', how='left')
     data['volUSD'] = data.vol * data.PriceUSD
     data = data.drop(columns=['vol', 'PriceUSD'])
-    utils.stats.windwoStats('dexVolumeUSD',cfg.pStart,cfg.pEnd,data,'volUSD','USD')
+    utils.stats.windwoStats('dexVolumeUSD',cfg.pStart,cfg.pEnd,data,'volUSD','USD',sumReq=True)
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'volUSD': 'sum'})
     dataM.drop(dataM.tail(1).index, inplace=True)
     charts.monthlyBar(data=dataM,
@@ -165,7 +165,7 @@ def monthlydexVolUSD():
 
 def monthlyfeesDCR():
     data = dcrdata_api.fees()
-    utils.stats.windwoStats('feesDCR',cfg.pStart,cfg.pEnd,data,'fees','DCR')
+    utils.stats.windwoStats('feesDCR',cfg.pStart,cfg.pEnd,data,'fees','DCR',sumReq=True)
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'fees': 'sum'})
     dataM.drop(dataM.tail(1).index, inplace=True)
     charts.monthlyBar(data=dataM,
@@ -188,7 +188,7 @@ def monthlyfeesDCR():
 
 def dailytxCount():
     data = dcrdata_api.txcount()
-    utils.stats.windwoStats('txCount',cfg.pStart,cfg.pEnd,data,'count','tx')
+    utils.stats.windwoStats('txCount',cfg.pStart,cfg.pEnd,data,'count','tx',sumReq=True)
     charts.dailyPlot(data=data,
                      dataCol='count',
                      cStart=cfg.cStart,
@@ -229,7 +229,7 @@ def monthlyTxCount():
 
 def dailyBlockSize():
     data = dcrdata_api.blocksize()
-    utils.stats.windwoStats('blkSize',cfg.pStart,cfg.pEnd,data,'size','MB')
+    utils.stats.windwoStats('blkSize',cfg.pStart,cfg.pEnd,data,'size','MB',sumReq=True)
     charts.dailyPlot(data=data,
                      dataCol='size',
                      cStart=cfg.cStart,
@@ -249,7 +249,7 @@ def dailyBlockSize():
 
 def monthlyblockchainSize():
     data = dcrdata_api.BlockchainSize()
-    utils.stats.windwoStats('blkchainSize',cfg.pStart,cfg.pEnd,data,'size','MB')
+    utils.stats.windwoStats('blkchainSize',cfg.pStart,cfg.pEnd,data,'size','MB',ignoreATH=True)
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'size': 'min'})
     dataM.drop(dataM.tail(1).index, inplace=True)
     charts.monthlyBar(data=dataM,

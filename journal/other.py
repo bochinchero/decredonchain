@@ -6,6 +6,7 @@ import utils.dcrdata_api as dcrdata_api
 import pandas as pd
 import utils.cm as cm
 import datetime as dt
+import utils.stats
 from matplotlib import pyplot as plt
 # chart start date of currnet period
 srcDateStart = cfg.pStart
@@ -239,6 +240,10 @@ def dailyHashDist():
 def dailyNodeDist():
     # pull data from the gh repo
     data = snapcsv.nodeByVer()
+    # compute a total node count
+    dataTotal = data
+    dataTotal['total'] = dataTotal.sum(axis=1)
+    utils.stats.windwoStats('NodeCount', cfg.pStart, cfg.pEnd, dataTotal, 'total', 'nodes')
     # extract list of column names
     labels = list(data.columns.values)
     # dates for the incorrect data

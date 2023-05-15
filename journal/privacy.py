@@ -9,7 +9,7 @@ colorWindow = charts.colour_hex('dcr_orange')
 
 def dailyVolume():
     data = dcrdata_api.privacypart()
-    utils.stats.windwoStats('PrivacyVol',cfg.pStart,cfg.pEnd,data,'PrivacyVol','DCR')
+    utils.stats.windwoStats('PrivacyVol',cfg.pStart,cfg.pEnd,data,'PrivacyVol','DCR',sumReq=True)
     charts.dailyPlot(data=data,
                      dataCol='PrivacyVol',
                      cStart=cfg.cStart,

@@ -33,9 +33,7 @@ def monthlyBalance():
     labels = ['Legacy Treasury','Decentralized Treasury']
     # set index
     data = data.set_index('date')
-    # plot
-    utils.stats.windwoStats('tBalanceLegacyDCR',cfg.pStart,cfg.pEnd,data,'legacy','DCR')
-    utils.stats.windwoStats('tBalanceDCR',cfg.pStart,cfg.pEnd,data,'treasury','DCR')
+
     charts.monthlyBarStacked(data=data,
                       labels=labels,
                       cStart=cfg.dStart,
@@ -156,7 +154,6 @@ def monthlyBalanceUSD():
     labels = ['Legacy Treasury','Decentralized Treasury']
     # set index
     data = data.set_index('date')
-    utils.stats.windwoStats('tBalanceUSD',cfg.pStart,cfg.pEnd,data,'BalanceUSD','USD')
     # plot
     charts.monthlyBar(data=data,
                       dataCol='BalanceUSD',
@@ -174,3 +171,30 @@ def monthlyBalanceUSD():
                       ylim=[0, 150000000],
                       annPos1=6.5,
                       annPos2=4)
+
+def tStats():
+    # get data from API
+    PriceUSD = cm.getMetric('dcr', 'PriceUSD', cfg.dStart, cfg.dEnd)
+    treasury = dcrdata_api.treasury(interval='day')
+    legacy = dcrdata_api.treasuryLegacy(interval='day')
+    # rename and pick out data from df for decentralised treasury
+    dataTreasury = treasury[['date', 'balance']].copy()
+    dataTreasury = dataTreasury.rename(columns={"balance": "treasury"})
+    # rename and pick out data from df for legacy treasury
+    dataLegacy = legacy[['date', 'balance']].copy()
+    dataLegacy = dataLegacy.rename(columns={"balance": "legacy"})
+    # create empty dataframe with the dates
+    date_rng = pd.date_range(start=cfg.dStart, end=cfg.pEnd, freq='d')
+    data = pd.DataFrame(date_rng, columns=['date'])
+    # merge in data
+    data = data.merge(dataLegacy, left_on='date', right_on='date', how='left')
+    data = data.merge(dataTreasury, left_on='date', right_on='date', how='left')
+    data = data.merge(PriceUSD, left_on='date', right_on='date', how='left')
+    # clean up
+    data = data.fillna(0)
+    data['balance'] = data['legacy'] + data['treasury']
+    data['balanceUSD'] = data['balance'] * data['PriceUSD']
+    data = data.set_index('date')
+    # save stats
+    utils.stats.windwoStats('treasuryBalanceDCR', cfg.pStart, cfg.pEnd, data, 'balance', 'DCR', ignoreATH=True)
+    utils.stats.windwoStats('treasuryBalanceUSD', cfg.pStart, cfg.pEnd, data, 'balanceUSD', 'USD', ignoreATH=True)

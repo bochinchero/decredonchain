@@ -304,3 +304,17 @@ def addressFlow(address,interval=None):
     df = df.rename(columns={"time": "date"})
     # convert price from atoms to base dcr
     return df
+
+def blockTime(interval=None):
+    if interval is None:
+        interval='day'
+    url = 'https://explorer.dcrdata.org/api/chart/duration-btw-blocks?axis=time&bin=d'+interval
+    # convert to dataframe
+    df = pd.read_json(url)
+    # convert time since epoch to datetime
+    df['date'] = pd.to_datetime(df['t'],unit='s')
+    # drop column
+    df = df.drop(columns=['axis','bin','t'])
+    output = df.set_index('date')
+    output.index = pd.to_datetime(output.index, utc=True, format=fmtt, errors='ignore')
+    return output

@@ -27,15 +27,27 @@ def windwoStats(id,dStart,dEnd,rawData,col,unitStr,sumReq=None,ignoreATH=None):
     # mask data for the period we're looking for
     mask = (rawData.index >= dStart) & (rawData.index < dEnd)
     data = rawData.loc[mask][col]
-    if sumReq is None:
-        valSum = 0
-    else:
-        valSum = autoFormat(data.sum())
-    # mask data for the time before the current period
+
+    # mask data for the whole before the current period
     maskPrev = (rawData.index < dStart)
     dataPrev = rawData.loc[maskPrev][col]
     prevMaxX = dataPrev.index[np.argmax(dataPrev)].date()
     prevMaxY = dataPrev.max()
+    # mask data for the month before this window
+    prevMonthStart = (dStart - pd.Timedelta(5, unit="d")).replace(day=1)
+    maskPrevMo = (rawData.index < dStart) & (rawData.index >= prevMonthStart)
+    dataPrevMo = rawData.loc[maskPrevMo][col]
+    prevMeanMo = dataPrevMo.mean()
+    MoMeanChg = 100*(data.mean()-prevMeanMo)/prevMeanMo
+    # some metrics dont need a sum, this depends on parameters fed in
+    if sumReq is None:
+        valSum = 0
+        prevSumMo = 0
+        MoSumChg = 0
+    else:
+        valSum = data.sum()
+        prevSumMo = dataPrevMo.sum()
+        MoSumChg = 100 * (data.sum() - prevSumMo) / prevSumMo
     if ignoreATH is None:
         if prevMaxY < data.max():
             newATH = '*'
@@ -51,8 +63,12 @@ def windwoStats(id,dStart,dEnd,rawData,col,unitStr,sumReq=None,ignoreATH=None):
                           'High Date': data.index[np.argmax(data)].date(),
                           'Low': autoFormat(data.min()),
                           'Low Date': data.index[np.argmin(data)].date(),
-                          'Mean': autoFormat(data.mean()),
-                          'Sum': valSum,
+                          'MoMean': autoFormat(data.mean()),
+                          'MoMeanChg': autoFormat(MoMeanChg),
+                          'MoSum': autoFormat(valSum),
+                          'MoSumChg': autoFormat(MoSumChg),
+                          'PrevMoSum' : autoFormat(prevSumMo),
+                          'PrevMoMean': autoFormat(prevMeanMo),
                           'Units':unitStr,
                           'PrevMaxVal':autoFormat(prevMaxY),
                           'PrevMaxDate':prevMaxX,

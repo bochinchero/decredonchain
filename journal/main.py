@@ -17,6 +17,10 @@ staking.dailyTicketPrice()
 staking.dailyStakePart()
 staking.dailyTicketPoolValue()
 staking.monthlyMissedVotes()
+staking.dailyTicketsVoted()
+staking.dailyTicketsBought()
+staking.monthlyTicketsBought()
+staking.monthlyTicketsVoted()
 
 # network
 network.dailyHashrate()
@@ -32,6 +36,8 @@ network.dailytxCount()
 network.dailyBlockSize()
 network.monthlyBlockSize()
 network.monthlyblockchainSize()
+network.dailyBlockTime()
+network.monthlyBlockTime()
 
 # privacy
 

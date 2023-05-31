@@ -28,8 +28,13 @@ import utils.dcrdata_api as dcrdata_api
 import utils.cm as cm
 import utils.stats
 import pandas as pd
+import utils.pgdata as pgdata
 # Create a dcrdata client and grab the daily dex volume
 
-# pull data from the gh repo
-data = snapcsv.nodeByVer()
 
+# pull data from the gh repo
+
+staking.dailyTicketsVoted()
+staking.dailyTicketsBought()
+staking.monthlyTicketsBought()
+staking.monthlyTicketsVoted()

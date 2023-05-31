@@ -3,6 +3,7 @@ import utils.charts as charts
 import utils.dcrdata_api as dcrdata_api
 import pandas as pd
 import utils.stats
+import utils.pgdata as pgdata
 colorWindow = charts.colour_hex('dcr_green')
 authString = 'Decred Journal - January 2023'
 
@@ -92,14 +93,37 @@ def monthlyMissedVotes():
                       annPos1=6,
                       annPos2=4)
 
-def monthlyTicketVolume():
+
+
+
+
+def dailyTicketsBought():
+    data = pgdata.ticketVotes()
+    utils.stats.windwoStats('tickets',cfg.pStart,cfg.pEnd,data,'tickets','tickets',sumReq=True)
+    ax, fig = charts.dailyPlot(data=data,
+                     dataCol='tickets',
+                     cStart=cfg.cStart,
+                     cEnd=cfg.cEnd,
+                     cTitle='Staking - Daily Tickets Purchased',
+                     fTitle='Staking_Daily_Tickets_Purchased',
+                     yLabel='Tickets Purchased',
+                     uLabel='Tickets',
+                     hStart=cfg.pStart,
+                     hEnd=cfg.pEnd,
+                     hColor=colorWindow,
+                     dStart=cfg.dStart,
+                     fmtAxis=charts.autoformatNoDec,
+                     fmtAnn=charts.autoformatNoDec,
+                     ylim=[0, 4000],
+                     annDist=0.3)
+
+def monthlyTicketsBought():
     # grab the missed votes from dcrdata
-    data = dcrdata_api.ticketCount()
-    utils.stats.windwoStats('ticketCount',cfg.pStart,cfg.pEnd,data,'count','tickets',sumReq=True)
-    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'count': 'sum'})
+    data = pgdata.ticketVotes()
+    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'tickets': 'sum', 'votes':'sum'})
     dataM.drop(dataM.tail(1).index, inplace=True)
     ax, fig = charts.monthlyBar(data=dataM,
-                      dataCol='count',
+                      dataCol='tickets',
                       bColour='dcr_green',
                       cStart=cfg.dStart,
                       cEnd=cfg.pEnd,
@@ -110,27 +134,51 @@ def monthlyTicketVolume():
                       hStart=cfg.pStart,
                       hColor=colorWindow,
                       dStart=cfg.dStart,
-                      fmtAxis=charts.autoformatMillnoDec,
+                      fmtAxis=charts.autoformatNoDec,
                       fmtAnn=charts.autoformatNoDec,
-                      ylim=[0, 80000],
+                      ylim=[0, 100000],
                       annPos1=3,
                       annPos2=2)
 
-
-def dailyTicketsBought():
-    data = dcrdata_api.ticketCount()
-    dataM = data.groupby(pd.Grouper(freq='D')).agg({'count': 'sum'})
-    ax, fig = charts.dailyPlot(data=dataM,
-                     dataCol='count',
+def dailyTicketsVoted():
+    data = pgdata.ticketVotes()
+    utils.stats.windwoStats('votes',cfg.pStart,cfg.pEnd,data,'votes','votes',sumReq=True)
+    ax, fig = charts.dailyPlot(data=data,
+                     dataCol='votes',
                      cStart=cfg.cStart,
                      cEnd=cfg.cEnd,
-                     cTitle='Staking - Tickets Purchased',
-                     fTitle='Staking_Daily_Tickets_Purchased',
-                                uLabel='Tickets',
+                     cTitle='Staking - Daily Votes',
+                     fTitle='Staking_Daily_Votes',
+                     yLabel='Votes',
+                     uLabel='Votes',
                      hStart=cfg.pStart,
                      hEnd=cfg.pEnd,
                      hColor=colorWindow,
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
-                     ylim=[0,8000])
+                     ylim=[0, 3000],
+                     annDist=0.3)
+
+def monthlyTicketsVoted():
+    # grab the missed votes from dcrdata
+    data = pgdata.ticketVotes()
+    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'tickets': 'sum', 'votes':'sum'})
+    dataM.drop(dataM.tail(1).index, inplace=True)
+    ax, fig = charts.monthlyBar(data=dataM,
+                      dataCol='votes',
+                      bColour='dcr_green',
+                      cStart=cfg.dStart,
+                      cEnd=cfg.pEnd,
+                      cTitle='Staking - Monthly Votes',
+                      fTitle='Staking_Monthly_Votes',
+                      yLabel='Votes',
+                      uLabel='Votes',
+                      hStart=cfg.pStart,
+                      hColor=colorWindow,
+                      dStart=cfg.dStart,
+                      fmtAxis=charts.autoformatNoDec,
+                      fmtAnn=charts.autoformatNoDec,
+                      ylim=[0, 100000],
+                      annPos1=3,
+                      annPos2=2)

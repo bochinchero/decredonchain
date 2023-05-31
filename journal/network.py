@@ -292,3 +292,45 @@ def monthlyBlockSize():
                       ylim=[0,500],
                       annPos1=4,
                       annPos2=3)
+
+def dailyBlockTime():
+    data = dcrdata_api.blockTime()
+    utils.stats.windwoStats('blkTime',cfg.pStart,cfg.pEnd,data,'duration','s')
+    charts.dailyPlot(data=data,
+                     dataCol='duration',
+                     cStart=cfg.cStart,
+                     cEnd=cfg.cEnd,
+                     cTitle='Network - Daily Mean Duration Between Blocks',
+                     fTitle='Network_Daily_BlockTime',
+                     yLabel='Duration Between Blocks',
+                     uLabel='s',
+                     hStart=cfg.pStart,
+                     hEnd=cfg.pEnd,
+                     hColor=colorWindow,
+                     dStart=cfg.dStart,
+                     fmtAxis=charts.autoformatNoDec,
+                     fmtAnn=charts.autoformat,
+                     annDist=0.5,
+                     ylim=[0,500])
+
+def monthlyBlockTime():
+    data = dcrdata_api.blockTime()
+    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'duration': 'mean'})
+    dataM.drop(dataM.tail(1).index, inplace=True)
+    charts.monthlyBar(data=dataM,
+                      dataCol='duration',
+                      bColour='dcr_blue',
+                      cStart=cfg.dStart,
+                      cEnd=cfg.pEnd,
+                      cTitle='Network - Monthly Mean Duration Between Blocks',
+                      fTitle='Network_Monthly_BlockTime',
+                      yLabel='Duration Between Blocks',
+                      uLabel='s',
+                      hStart=cfg.pStart,
+                      hColor=colorWindow,
+                      dStart=cfg.dStart,
+                      fmtAxis=charts.autoformatNoDec,
+                      fmtAnn=charts.autoformat,
+                      ylim=[0,500],
+                      annPos1=4,
+                      annPos2=3)

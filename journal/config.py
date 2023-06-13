@@ -7,8 +7,8 @@ path = '$HOME/'
 fmtt = '%Y-%m-%dT%H:%M:%S'
 
 # evaluation period
-period_start = dt.date(int(2023),int(4),int(1))
-period_end   = dt.date(int(2023),int(5),int(1))
+period_start = dt.date(int(2023),int(5),int(1))
+period_end   = dt.date(int(2023),int(6),int(1))
 
 # declare offsets
 pdtd14 = pd.Timedelta(14, unit="d")
@@ -46,12 +46,12 @@ netHashLimMax = 150000
 netHashLimMin = 0
 
 # TxTfrValAdjNtv daily axis limits
-netDailyTxVolNtvMax = 1500000
-netDailyTxVolNtvMin = 0
+netDailyTxVolNtvMax = 1000000
+netDailyTxVolNtvMin = -200000
 
 # TxTfrValAdjUSD daily axis limits
-netDailyTxVolUSDMax = 30000000
-netDailyTxVolUSDMin = 0
+netDailyTxVolUSDMax = 20000000
+netDailyTxVolUSDMin = -5000000
 
 # TxTfrValAdjNtv daily axis limits
 netMonthlyTxxVolNtvMax = 35000000

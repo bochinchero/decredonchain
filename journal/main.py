@@ -38,6 +38,9 @@ network.monthlyBlockSize()
 network.monthlyblockchainSize()
 network.dailyBlockTime()
 network.monthlyBlockTime()
+network.monthlyNewSupplyDist()
+network.monthlyNewSupplyDistUSD()
+network.NewSupplyDistDonut()
 
 # privacy
 

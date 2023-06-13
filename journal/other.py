@@ -264,7 +264,7 @@ def dailyNodeDist():
                            dStart=cfg.dStart,
                            fmtAxis=charts.autoformatNoDec,
                            fmtAnn=charts.autoformatNoDec,
-                           ylim=[0, 250],
+                           ylim=[0, 500],
                            annMinPos=0.2,
                            annMaxPos=0.2)
     ax.axvspan(cfg.dCsvStart, eEnd, color=charts.colour_hex('dcr_orange'), alpha=0.5)

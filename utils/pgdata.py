@@ -14,3 +14,15 @@ def ticketVotes():
     # set index
     fData = fData.set_index('date')
     return fData
+
+
+def newSupplyDist():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/blockRewards.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData

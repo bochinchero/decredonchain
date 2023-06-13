@@ -4,7 +4,7 @@ import utils.dcrdata_api as dcrdata_api
 import utils.cm as cm
 import pandas as pd
 import utils.stats
-
+import utils.pgdata as pgdata
 colorWindow = charts.colour_hex('dcr_blue')
 
 def dailyHashrate():
@@ -88,8 +88,8 @@ def monthlyTxTfrValAdjNtv():
                       fmtAxis=charts.autoformatMillnoDec,
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[cfg.netMonthlyTxxVolNtvMin,cfg.netMonthlyTxxVolNtvMax],
-                      annPos1=6,
-                      annPos2=3.5)
+                      annPos1=7,
+                      annPos2=2)
 
 def monthlyTxTfrValAdjUSD():
     data = cm.getMetric('dcr','TxTfrValAdjUSD',cfg.dStart,cfg.dEnd)
@@ -310,7 +310,7 @@ def dailyBlockTime():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
-                     annDist=0.5,
+                     annDist=0.2,
                      ylim=[0,500])
 
 def monthlyBlockTime():
@@ -334,3 +334,103 @@ def monthlyBlockTime():
                       ylim=[0,500],
                       annPos1=4,
                       annPos2=3)
+
+def monthlyNewSupplyDist():
+    data = pgdata.newSupplyDist()
+    utils.stats.windwoStats('issuancePoW',cfg.pStart,cfg.pEnd,data,'powDCR','dcr',sumReq=True)
+    utils.stats.windwoStats('issuancePoS',cfg.pStart,cfg.pEnd,data,'posDCR','dcr',sumReq=True)
+    utils.stats.windwoStats('issuanceTres',cfg.pStart,cfg.pEnd,data,'tresDCR','dcr',sumReq=True)
+    # filter data for the required month
+    mask = (data.index < cfg.pEnd)
+    dataMask = data.loc[mask]
+    # create label list for legend
+    labels = ['Miners','Stakers','Treasury']
+    dataM = dataMask.groupby(pd.Grouper(freq='MS')).agg({'powDCR': 'sum','posDCR':'sum','tresDCR':'sum'})
+    charts.monthlyBarStacked(data=dataM,
+                      labels=labels,
+                      cStart=cfg.dStart,
+                      cEnd=cfg.cEnd,
+                      cTitle='Monthly New Issuance (DCR)',
+                      fTitle='New_Issuance_DCR',
+                      yLabel='Issuance (DCR)',
+                      uLabel='DCR',
+                      hStart=cfg.pStart,
+                      dStart=cfg.dStart,
+                      fmtAxis=charts.autoformatNoDec,
+                      fmtAnn=charts.autoformat,
+                      ylim=[0, 300000],
+                      annPos1=4,
+                      annPos2=3)
+
+def monthlyNewSupplyDistUSD():
+    data = pgdata.newSupplyDist()
+    utils.stats.windwoStats('issuancePoWUSD', cfg.pStart, cfg.pEnd, data, 'powUSD', 'USD', sumReq=True)
+    utils.stats.windwoStats('issuancePoSUSD', cfg.pStart, cfg.pEnd, data, 'posUSD', 'USD', sumReq=True)
+    utils.stats.windwoStats('issuanceTresUSD',cfg.pStart,cfg.pEnd,data,'tresUSD','USD',sumReq=True)
+    # filter data for the required month
+    mask = (data.index < cfg.pEnd)
+    dataMask = data.loc[mask]
+    # create label list for legend
+    labels = ['Miners', 'Stakers','Treasury']
+    dataM = dataMask.groupby(pd.Grouper(freq='MS')).agg({'powUSD': 'sum', 'posUSD': 'sum','tresUSD':'sum'})
+    charts.monthlyBarStacked(data=dataM,
+                             labels=labels,
+                             cStart=cfg.dStart,
+                             cEnd=cfg.cEnd,
+                             cTitle='Monthly New Issuance (USD)',
+                             fTitle='New_Issuance_USD',
+                             yLabel='Issuance (USD)',
+                             uLabel='USD',
+                             hStart=cfg.pStart,
+                             dStart=cfg.dStart,
+                             fmtAxis=charts.autoformatNoDec,
+                             fmtAnn=charts.autoformat,
+                             ylim=[0, 20000000],
+                             annPos1=4,
+                             annPos2=3)
+
+
+def monthlyNewSupplyDistUSD():
+    data = pgdata.newSupplyDist()
+    utils.stats.windwoStats('issuancePoWUSD', cfg.pStart, cfg.pEnd, data, 'powUSD', 'USD', sumReq=True)
+    utils.stats.windwoStats('issuancePoSUSD', cfg.pStart, cfg.pEnd, data, 'posUSD', 'USD', sumReq=True)
+    utils.stats.windwoStats('issuanceTresUSD',cfg.pStart,cfg.pEnd,data,'tresUSD','USD',sumReq=True)
+    # filter data for the required month
+    mask = (data.index < cfg.pEnd)
+    dataMask = data.loc[mask]
+    # create label list for legend
+    labels = ['Miners', 'Stakers','Treasury']
+    dataM = dataMask.groupby(pd.Grouper(freq='MS')).agg({'powUSD': 'sum', 'posUSD': 'sum','tresUSD':'sum'})
+    charts.monthlyBarStacked(data=dataM,
+                             labels=labels,
+                             cStart=cfg.dStart,
+                             cEnd=cfg.cEnd,
+                             cTitle='Monthly New Issuance (USD)',
+                             fTitle='New_Issuance_USD',
+                             yLabel='Issuance (USD)',
+                             uLabel='USD',
+                             hStart=cfg.pStart,
+                             dStart=cfg.dStart,
+                             fmtAxis=charts.autoformatNoDec,
+                             fmtAnn=charts.autoformat,
+                             ylim=[0, 25000000],
+                             annPos1=4,
+                             annPos2=3)
+
+def NewSupplyDistDonut():
+    data = pgdata.newSupplyDist()
+    # filter data for the required month
+    mask = (data.index < cfg.pEnd) & (data.index >= cfg.pStart)
+    dataMask = data.loc[mask]
+    labels = ['Miners', 'Stakers','Treasury']
+    dataM = dataMask.groupby(pd.Grouper(freq='MS')).agg({'powDCR': 'sum', 'posDCR': 'sum','tresDCR':'sum'})
+    # create row for pow
+    rowPOW = pd.DataFrame([{'labels': 'Miners', 'values': dataM.powDCR[0]}])
+    # create row for pos
+    rowPOS = pd.DataFrame([{'labels': 'Stakers', 'values': dataM.posDCR[0]}])
+    # create row for pos
+    rowTRES = pd.DataFrame([{'labels': 'Treasury', 'values': dataM.tresDCR[0]}])
+    # create df for Overall Missed Ticket Distribution
+    issuanceDist = pd.concat([rowPOW, rowPOS,rowTRES], axis=0)
+    fnoteList='Data from '+ cfg.pStart.strftime("%Y-%m-%d") + ' to ' + cfg.pEnd.strftime("%Y-%m-%d") + '.'
+    charts.donutChartL('New Issuance Distribution (DCR)',issuanceDist,cfg.pEnd,sourceStr=fnoteList,authStr='Decred Journal',saveDate=cfg.pStart)

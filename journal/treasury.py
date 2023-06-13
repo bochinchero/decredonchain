@@ -33,8 +33,10 @@ def monthlyBalance():
     labels = ['Legacy Treasury','Decentralized Treasury']
     # set index
     data = data.set_index('date')
-
-    charts.monthlyBarStacked(data=data,
+    # filter data for the required month
+    mask = (data.index < cfg.pEnd)
+    dataMask = data.loc[mask]
+    charts.monthlyBarStacked(data=dataMask,
                       labels=labels,
                       cStart=cfg.dStart,
                       cEnd=cfg.cEnd,
@@ -154,8 +156,11 @@ def monthlyBalanceUSD():
     labels = ['Legacy Treasury','Decentralized Treasury']
     # set index
     data = data.set_index('date')
+    # filter data for the required month
+    mask = (data.index < cfg.pEnd)
+    dataMask = data.loc[mask]
     # plot
-    charts.monthlyBar(data=data,
+    charts.monthlyBar(data=dataMask,
                       dataCol='BalanceUSD',
                       bColour='dcr_green',
                       cStart=cfg.dStart,

@@ -26,3 +26,51 @@ def newSupplyDist():
     # set index
     fData = fData.set_index('date')
     return fData
+
+
+def versionVotes():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/voteVersions.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData
+
+
+def versionBlocks():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/blockVersions.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData
+
+
+def supply():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/supply.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData
+
+
+def rvUSD():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/rvUSD.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData

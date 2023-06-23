@@ -244,12 +244,13 @@ def dailyNodeDist():
     dataTotal = data
     dataTotal['total'] = dataTotal.sum(axis=1)
     utils.stats.windwoStats('NodeCount', cfg.pStart, cfg.pEnd, dataTotal, 'total', 'nodes')
-    # extract list of column names
-    labels = list(data.columns.values)
     # dates for the incorrect data
     fmtt = '%Y-%m-%dT%H:%M:%S'
     eEnd = pd.to_datetime(dt.date(int(2023), int(1), int(23)), utc=True, format=fmtt, errors='ignore')
     eMid = pd.to_datetime(dt.date(int(2022), int(12), int(1)), utc=True, format=fmtt, errors='ignore')
+    data = data.drop(columns=['total'])
+    # extract list of column names
+    labels = list(data.columns.values)
     ax, fig = charts.stackedAreaPlot(data=data,
                            labels=labels,
                            cStart=cfg.dCsvStart,
@@ -264,10 +265,12 @@ def dailyNodeDist():
                            dStart=cfg.dStart,
                            fmtAxis=charts.autoformatNoDec,
                            fmtAnn=charts.autoformatNoDec,
-                           ylim=[0, 500],
+                           ylim=[0, 250],
                            annMinPos=0.2,
                            annMaxPos=0.2)
     ax.axvspan(cfg.dCsvStart, eEnd, color=charts.colour_hex('dcr_orange'), alpha=0.5)
     plt.text(eMid, 225, 'INCOMPLETE NODE DATA', ha='center', va='center', fontsize=14,
              fontweight='bold',color=charts.colour_hex('dcr_orange'))
     chartUtils.saveFigure(fig,'Daily_NodeDistribution', date=cfg.pStart)
+
+dailyNodeDist()

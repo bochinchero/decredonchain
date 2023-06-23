@@ -5,6 +5,7 @@ import utils.cm as cm
 import pandas as pd
 import utils.stats
 import utils.pgdata as pgdata
+import datetime as dt
 colorWindow = charts.colour_hex('dcr_blue')
 
 def dailyHashrate():
@@ -417,6 +418,7 @@ def monthlyNewSupplyDistUSD():
                              annPos1=4,
                              annPos2=3)
 
+
 def NewSupplyDistDonut():
     data = pgdata.newSupplyDist()
     # filter data for the required month
@@ -434,3 +436,66 @@ def NewSupplyDistDonut():
     issuanceDist = pd.concat([rowPOW, rowPOS,rowTRES], axis=0)
     fnoteList='Data from '+ cfg.pStart.strftime("%Y-%m-%d") + ' to ' + cfg.pEnd.strftime("%Y-%m-%d") + '.'
     charts.donutChartL('New Issuance Distribution (DCR)',issuanceDist,cfg.pEnd,sourceStr=fnoteList,authStr='Decred Journal',saveDate=cfg.pStart)
+
+
+def dailyVoteVersion():
+    # pull data from the gh repo
+    alldata = pgdata.versionVotes()
+    # mask data for only the relevant period (what's show in the charts)
+    mask = (alldata.index < cfg.pEnd) & (alldata.index >= cfg.cStart)
+    data = alldata.loc[mask]
+    # remove columns with only 0
+    data = data.loc[:, (data != 0).any(axis=0)]
+    data = data[data.columns[::-1]]
+    # extract list of column names
+    labels = list(data.columns.values)
+    data[labels] = data[labels].div(data.sum(axis=1), axis=0).multiply(100)
+    # dates for the incorrect data
+    fmtt = '%Y-%m-%dT%H:%M:%S'
+    ax, fig = charts.stackedAreaPlot(data=data,
+                           labels=labels,
+                           cStart=cfg.cStart,
+                           cEnd=cfg.cEnd,
+                           cTitle='Daily Vote Version Distribution',
+                           fTitle='Daily_VoteVersions',
+                           yLabel='Vote Distribution (%)',
+                           uLabel='Votes',
+                           hStart=cfg.pStart,
+                           hEnd=cfg.pEnd,
+                           hColor=charts.colour_hex('dcr_grey25'),
+                           dStart=cfg.dStart,
+                           fmtAxis=charts.autoformatNoDec,
+                           fmtAnn=charts.autoformatNoDec,
+                           ylim=[0, 100],
+                           disAnn=True)
+
+def dailyBlockVersion():
+    # pull data from the gh repo
+    alldata = pgdata.versionBlocks()
+    # mask data for only the relevant period (what's show in the charts)
+    mask = (alldata.index < cfg.pEnd) & (alldata.index >= cfg.cStart)
+    data = alldata.loc[mask]
+    # remove columns with only 0
+    data = data.loc[:, (data != 0).any(axis=0)]
+    data = data[data.columns[::-1]]
+    # extract list of column names
+    labels = list(data.columns.values)
+    data[labels] = data[labels].div(data.sum(axis=1), axis=0).multiply(100)
+    # dates for the incorrect data
+    fmtt = '%Y-%m-%dT%H:%M:%S'
+    ax, fig = charts.stackedAreaPlot(data=data,
+                           labels=labels,
+                           cStart=cfg.cStart,
+                           cEnd=cfg.cEnd,
+                           cTitle='Daily Block Version Distribution',
+                           fTitle='Daily_BlockVersions',
+                           yLabel='Block Distribution (%)',
+                           uLabel='Blocks',
+                           hStart=cfg.pStart,
+                           hEnd=cfg.pEnd,
+                           hColor=charts.colour_hex('dcr_grey25'),
+                           dStart=cfg.dStart,
+                           fmtAxis=charts.autoformatNoDec,
+                           fmtAnn=charts.autoformatNoDec,
+                           ylim=[0, 100],
+                           disAnn=True)

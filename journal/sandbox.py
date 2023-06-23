@@ -33,8 +33,4 @@ import utils.pgdata as pgdata
 
 
 # pull data from the gh repo
-
-staking.dailyTicketsVoted()
-staking.dailyTicketsBought()
-staking.monthlyTicketsBought()
-staking.monthlyTicketsVoted()
+other.dailyNodeDist()

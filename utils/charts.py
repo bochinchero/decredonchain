@@ -645,7 +645,7 @@ def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
 def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
                yLabel,uLabel,hStart=None,hEnd=None,hColor=None,
                dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,saveFig=None,
-               annPos1 =None,annPos2=None,annPos3=None,annMinPos=None,annMaxPos=None,legend=None):
+               annPos1 =None,annPos2=None,annPos3=None,annMinPos=None,annMaxPos=None,legend=None,disAnn=False):
     # data preparation
     cols = list(data.columns.values)
     # initialise Y data list
@@ -673,11 +673,12 @@ def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
     # chart
     if hStart is not None and hEnd is not None:
         ax.axvspan(hStart, hEnd, color=hColor, alpha=0.25)
-        # annotate min and max within window
-        chartUtils.annotFunc(data, 'total', fType='max', ax=ax, dateRange=[hStart, hEnd],
-                             pos='Up',dist=annMaxPos, unitStr=uLabel, formatStr=fmtAnn)
-        chartUtils.annotFunc(data, 'total', fType='min', ax=ax, dateRange=[hStart, hEnd],
-                             pos='Up',dist=annMinPos, unitStr=uLabel, formatStr=fmtAnn)
+        if disAnn is False:
+            # annotate min and max within window
+            chartUtils.annotFunc(data, 'total', fType='max', ax=ax, dateRange=[hStart, hEnd],
+                                 pos='Up',dist=annMaxPos, unitStr=uLabel, formatStr=fmtAnn)
+            chartUtils.annotFunc(data, 'total', fType='min', ax=ax, dateRange=[hStart, hEnd],
+                                 pos='Up',dist=annMinPos, unitStr=uLabel, formatStr=fmtAnn)
 
     # annotate previous ATH
     # if hStart is None:

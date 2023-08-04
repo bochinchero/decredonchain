@@ -154,7 +154,7 @@ def getFunc(data,fType=None,dateRange=None):
         yval = df.min()
     return xval, yval
 
-def annotFunc(df,coly, fType=None,ax=None,dateRange=None,pos=None,formatStr=None,unitStr=None,dist=None):
+def annotFunc(df,coly, fType=None,ax=None,dateRange=None,pos=None,formatStr=None,unitStr=None,dist=None,midY=None):
     # this function annotates the min and max values of dataframe (df) column (coly)
     # get the desired value using
     xval,yval = getFunc(df[coly],fType,dateRange)
@@ -162,15 +162,27 @@ def annotFunc(df,coly, fType=None,ax=None,dateRange=None,pos=None,formatStr=None
     # check if the distance of the annotation is specified, if not set default
     if dist is None:
         dist = 0.05
+    # get y limit values
+    ymin, ymax = ax.get_ylim()
     # set position and distance of the textbox from the plot
     if pos == 'Up':
-        xytext = (xval,yval*(1+dist))
+        if midY is None:
+            xytext = (xval,yval*(1+dist))
+        else:
+            ymid = (ymax + yval)/2
+            xytext = (xval,ymid)
+
     elif pos == 'Left':
-        xytext = (xval*(1-dist),yval)
+        xytext = (-xval*(1-dist),yval)
     elif pos == 'Right':
         xytext = (xval*(1+dist),yval)
     else:
-        xytext = (xval,yval*(1-dist))
+        if midY is None:
+           xytext = (xval,-yval*(1-dist))
+        else:
+            ymid = (yval + ymin)/2
+            xytext = (xval,ymid)
+
     # check if format of the value is set
     if formatStr is None:
         formatStr = autoFMT

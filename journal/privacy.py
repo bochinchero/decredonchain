@@ -24,7 +24,8 @@ def dailyVolume():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
-                     ylim=[cfg.csppVolMin,cfg.csppVolMax])
+                     ylim=[cfg.csppVolMin,cfg.csppVolMax],
+                     annMid=True)
 
 def dailyMixUnspentPC():
     data = dcrdata_api.anonimityset()
@@ -44,7 +45,7 @@ def dailyMixUnspentPC():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
                      ylim=[cfg.csppMixPCNin,cfg.csppMixPCNax],
-                     annDist=0.05)
+                     annMid=True)
 
 def dailyMixUnspentDCR():
     data = dcrdata_api.anonimityset()
@@ -64,7 +65,7 @@ def dailyMixUnspentDCR():
                      fmtAxis=charts.autoformatMill,
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[cfg.csppMixDCRNin,cfg.csppMixDCRNax],
-                     annDist=0.1)
+                     annMid=True)
 
 
 def monthlyVolumeDCR():
@@ -87,7 +88,7 @@ def monthlyVolumeDCR():
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[cfg.csppMVolMin,cfg.csppMVolMax],
                       annPos1=2.5,
-                      annPos2=1)
+                      annPos2=2)
 
 def monthlyVolumeUSD():
     data = dcrdata_api.privacypart()

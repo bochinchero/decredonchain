@@ -31,6 +31,10 @@ import pandas as pd
 import utils.pgdata as pgdata
 # Create a dcrdata client and grab the daily dex volume
 
+# chart start date of currnet period
+srcDateStart = cfg.pStart
+# chart end date of the current period
+srcDateEnd = cfg.pEnd
 
-# pull data from the gh repo
-other.dailyNodeDist()
+other.blockVersDist()
+other.voteVersDist()

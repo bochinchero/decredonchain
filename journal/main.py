@@ -41,6 +41,8 @@ network.monthlyBlockTime()
 network.monthlyNewSupplyDist()
 network.monthlyNewSupplyDistUSD()
 network.NewSupplyDistDonut()
+network.dailyVoteVersion()
+network.dailyVoteVersion()
 
 # privacy
 
@@ -68,3 +70,7 @@ treasury.tStats()
 lightning.dailyChannels()
 lightning.dailyNodes()
 lightning.dailyCapacity()
+
+# version distribution
+other.blockVersDist()
+other.voteVersDist()

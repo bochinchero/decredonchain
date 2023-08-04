@@ -33,7 +33,7 @@ def dailyCapacity():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
                      ylim=[0, 300],
-                     annDist=0.25)
+                     annMid=True)
 
 def dailyChannels():
     data = snapcsv.dailychannelsLN()
@@ -53,7 +53,7 @@ def dailyChannels():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[0, 800],
-                     annDist=0.25)
+                     annMid=True)
 
 def dailyNodes():
     data = snapcsv.dailynodesLN()
@@ -73,4 +73,4 @@ def dailyNodes():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[0, 300],
-                     annDist=0.25)
+                     annMid=True)

@@ -276,7 +276,7 @@ def saveFigure(figx, figTitle, path=None,date=None):
 
 def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
                yLabel,uLabel=None,hStart=None,hEnd=None,
-               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,annDist=None,disATH=None):
+               hColor=None,dStart=None,fmtAxis=None,fmtAnn=None,ylim=None,annDist=None,disATH=None,annMid=None):
     # if there is no data start specified, used the chart start
     if dStart is None:
         dStart = cStart
@@ -284,14 +284,7 @@ def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
     ax, xfig = fig(cTitle, yLabel, None, cStart, cEnd)
     if annDist is None:
         annDist = 0.2
-    # highlight period for this month
-    if hStart is not None and hEnd is not None:
-        ax.axvspan(hStart, hEnd, color=hColor, alpha=0.25)
-        # annotate min and max within window
-        chartUtils.annotFunc(data, dataCol, fType='max',ax=ax, dateRange=[hStart,hEnd],
-                             pos='Up',formatStr=fmtAnn,unitStr=uLabel,dist=annDist)
-        chartUtils.annotFunc(data, dataCol, fType='min',ax=ax, dateRange=[hStart,hEnd],
-                             pos='Down',formatStr=fmtAnn,unitStr=uLabel,dist=annDist)
+
     # annotate previous ATH
     if disATH is None:
         if hStart is None:
@@ -308,6 +301,14 @@ def dailyPlot(data,dataCol,cStart,cEnd,cTitle,fTitle,
         ax.set_ylim(ylim)
     else:
         chartUtils.plot_autoScale(data[dataCol], ax, dateRange=[cStart, cEnd], pad=0.8)
+    # highlight period for this month
+    if hStart is not None and hEnd is not None:
+        ax.axvspan(hStart, hEnd, color=hColor, alpha=0.25)
+        # annotate min and max within window
+        chartUtils.annotFunc(data, dataCol, fType='max',ax=ax, dateRange=[hStart,hEnd],
+                             pos='Up',formatStr=fmtAnn,unitStr=uLabel,dist=annDist,midY=annMid)
+        chartUtils.annotFunc(data, dataCol, fType='min',ax=ax, dateRange=[hStart,hEnd],
+                             pos='Down',formatStr=fmtAnn,unitStr=uLabel,dist=annDist,midY=annMid)
     xfig.autofmt_xdate(rotation=45)
     # plt.tight_layout()
     #chartUtils.annFootnote(xfig,'Decred Journal')

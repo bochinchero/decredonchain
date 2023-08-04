@@ -7,6 +7,7 @@ import pandas as pd
 import utils.cm as cm
 import datetime as dt
 import utils.stats
+import utils.pgdata as pgdata
 from matplotlib import pyplot as plt
 # chart start date of currnet period
 srcDateStart = cfg.pStart
@@ -30,6 +31,10 @@ def hashDist():
 def nodesDist():
     # pull node data
     nodesData = snapcsv.nodeDist(srcDateEnd)
+    nodesData['useragent'] = nodesData['useragent'].replace(
+        {'1.7.*': '1.7.x', '1.6.*': '1.6.x', '1.5.*': '1.5.x', '1.4.*': 'other'}, regex=True)
+    nodesData = nodesData.groupby("useragent").agg({'count': 'sum'})
+    nodesData = nodesData.reset_index()
     nodesData = nodesData.rename(columns={'count':'values','useragent':'labels'})
     nodeStr='Data from nodes.jholdstock.uk on '+ srcDateEnd.strftime("%Y-%m-%d")
     charts.donutChartL('Reachable Node Versions',nodesData,srcDateEnd,sourceStr=nodeStr,authStr='Decred Journal'
@@ -273,4 +278,42 @@ def dailyNodeDist():
              fontweight='bold',color=charts.colour_hex('dcr_orange'))
     chartUtils.saveFigure(fig,'Daily_NodeDistribution', date=cfg.pStart)
 
-dailyNodeDist()
+def blockVersDist():
+    # pull data from the gh repo
+    alldata = pgdata.versionBlocks()
+    # mask data for only the relevant day (period end)
+    mask = (alldata.index == cfg.pEnd)
+    data = alldata.loc[mask]
+    # reset index
+    data = data.reset_index()
+    # remove columns with only 0
+    data = data.loc[:, (data != 0).any(axis=0)]
+    data = data.drop(columns=['date'])
+    data['version'] = 'blocks'
+    dataT = data.set_index('version').T
+    dataT = dataT.reset_index()
+    dataT = dataT.rename(columns={'blocks': 'values', 'index': 'labels'})
+    blockStr = 'Distribution across blocks mined on ' + srcDateEnd.strftime("%Y-%m-%d")
+    charts.donutChartL('Block Version Distribution', dataT, srcDateEnd, sourceStr=blockStr,
+                       authStr='Decred Journal'
+                       , saveDate=srcDateStart)
+
+def voteVersDist():
+    # pull data from the gh repo
+    alldata = pgdata.versionVotes()
+    # mask data for only the relevant day (period end)
+    mask = (alldata.index == cfg.pEnd)
+    data = alldata.loc[mask]
+    # reset index
+    data = data.reset_index()
+    # remove columns with only 0
+    data = data.loc[:, (data != 0).any(axis=0)]
+    data = data.drop(columns=['date'])
+    data['version'] = 'votes'
+    dataT = data.set_index('version').T
+    dataT = dataT.reset_index()
+    dataT = dataT.rename(columns={'votes': 'values', 'index': 'labels'})
+    voteStr = 'Distribution across votes on ' + srcDateEnd.strftime("%Y-%m-%d")
+    charts.donutChartL('Vote Version Distribution', dataT, srcDateEnd, sourceStr=voteStr  ,
+                       authStr='Decred Journal'
+                       , saveDate=srcDateStart)

@@ -67,7 +67,7 @@ csppVolMax = 900000
 csppVolMin = 0
 
 # cspp monthly axis limits
-csppMVolMax = 16000000
+csppMVolMax = 20000000
 csppMVolMin = 0
 
 # cspp monthly axis limits USD

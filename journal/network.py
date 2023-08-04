@@ -25,7 +25,8 @@ def dailyHashrate():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
-                     ylim=[cfg.netHashLimMin,cfg.netHashLimMax])
+                     ylim=[cfg.netHashLimMin,cfg.netHashLimMax],
+                     annMid=True)
 
 
 def dailyTxTfrValAdjNtv():
@@ -46,7 +47,7 @@ def dailyTxTfrValAdjNtv():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
                      ylim=[cfg.netDailyTxVolNtvMin,cfg.netDailyTxVolNtvMax],
-                     annDist=0.5)
+                     annMid=True)
 
 
 def dailyTxTfrValAdjUSD():
@@ -67,7 +68,7 @@ def dailyTxTfrValAdjUSD():
                      fmtAxis=charts.autoformatMill,
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[cfg.netDailyTxVolUSDMin,cfg.netDailyTxVolUSDMax],
-                     annDist=0.5)
+                     annMid=True)
 
 
 def monthlyTxTfrValAdjNtv():
@@ -90,7 +91,7 @@ def monthlyTxTfrValAdjNtv():
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[cfg.netMonthlyTxxVolNtvMin,cfg.netMonthlyTxxVolNtvMax],
                       annPos1=7,
-                      annPos2=2)
+                      annPos2=6)
 
 def monthlyTxTfrValAdjUSD():
     data = cm.getMetric('dcr','TxTfrValAdjUSD',cfg.dStart,cfg.dEnd)
@@ -112,7 +113,7 @@ def monthlyTxTfrValAdjUSD():
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[cfg.netMonthlyTxxVolUSDMin,cfg.netMonthlyTxxVolUSDMax],
                       annPos1=6,
-                      annPos2=3)
+                      annPos2=5)
 
 def monthlydexVolDCR():
     data = dcrdata_api.dcrdex()
@@ -204,7 +205,7 @@ def dailytxCount():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
-                     annDist=0.5,
+                     annMid=True,
                      ylim=[0,12000])
 
 def monthlyTxCount():
@@ -245,7 +246,7 @@ def dailyBlockSize():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
-                     annDist=0.5,
+                     annMid=True,
                      ylim=[0,20])
 
 def monthlyblockchainSize():
@@ -311,7 +312,7 @@ def dailyBlockTime():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
-                     annDist=0.2,
+                     annMid=True,
                      ylim=[0,500])
 
 def monthlyBlockTime():
@@ -442,7 +443,7 @@ def dailyVoteVersion():
     # pull data from the gh repo
     alldata = pgdata.versionVotes()
     # mask data for only the relevant period (what's show in the charts)
-    mask = (alldata.index < cfg.pEnd) & (alldata.index >= cfg.cStart)
+    mask = (alldata.index < cfg.cEnd) & (alldata.index >= cfg.cStart)
     data = alldata.loc[mask]
     # remove columns with only 0
     data = data.loc[:, (data != 0).any(axis=0)]
@@ -473,7 +474,7 @@ def dailyBlockVersion():
     # pull data from the gh repo
     alldata = pgdata.versionBlocks()
     # mask data for only the relevant period (what's show in the charts)
-    mask = (alldata.index < cfg.pEnd) & (alldata.index >= cfg.cStart)
+    mask = (alldata.index < cfg.cEnd) & (alldata.index >= cfg.cStart)
     data = alldata.loc[mask]
     # remove columns with only 0
     data = data.loc[:, (data != 0).any(axis=0)]

@@ -26,7 +26,7 @@ def dailyStakePart():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
                      ylim=[cfg.stakeSpLimMin, cfg.stakeSpLimMax],
-                     annDist=0.05)
+                     annMid=True)
 
 def dailyTicketPrice():
     data = dcrdata_api.ticketprice()
@@ -46,7 +46,7 @@ def dailyTicketPrice():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
                      ylim=[cfg.stakeTpLimMin, cfg.stakeTpLimMax],
-                              annDist=0.25)
+                              annMid=True)
 
 
 def dailyTicketPoolValue():
@@ -67,7 +67,7 @@ def dailyTicketPoolValue():
                      fmtAxis=charts.autoformatMill,
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[cfg.stakePvLimMin,cfg.stakePvLimMax],
-                     annDist=0.1)
+                     annMid=True)
 
 def monthlyMissedVotes():
     # grab the missed votes from dcrdata
@@ -115,7 +115,7 @@ def dailyTicketsBought():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[0, 4000],
-                     annDist=0.3)
+                     annMid=True)
 
 def monthlyTicketsBought():
     # grab the missed votes from dcrdata
@@ -158,7 +158,7 @@ def dailyTicketsVoted():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
                      ylim=[0, 3000],
-                     annDist=0.3)
+                     annMid=True)
 
 def monthlyTicketsVoted():
     # grab the missed votes from dcrdata

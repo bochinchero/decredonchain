@@ -213,6 +213,26 @@ def colour_hex(colour):
     output = df.loc[df['colour'] == colour, 'hex'].iloc[0]
     return output
 
+def annotBar(ax,xc,df=None,cols=None):
+    ax.axvline(x=xc,color=colour_hex('dcr_black'),ls='--', lw=1.5,alpha=0.5)
+    bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.7)
+    arrowprops = dict(arrowstyle="->")
+    #kw = dict(xycoords='data', textcoords=ax.transData,
+    #          arrowprops=arrowprops, bbox=bbox_props, ha="center", va="center")
+    #0ax.annotate(text, xy=vals, xytext=coords, **kw)
+    ylim = ax.get_ylim()
+    dist = (ylim[1]-ylim[0])/100
+    pos = ylim[1]
+    for i, line in enumerate(ax.lines[:]):
+        pColour = line.get_color()
+        ydata = line.get_ydata(orig=True)
+        xdata = line.get_xdata(orig=True)
+        ipos = np.where(xdata == xc)
+        iposx = int(ipos[0])
+        yval = int(ydata[iposx])
+        print(yval)
+        pos = pos - dist
+        ax.text(xc, pos, str(yval), ha='center', fontsize=10,color=pColour)
 
 def newFig(title):
     # this function creates a figure with the standard format

@@ -36,5 +36,4 @@ srcDateStart = cfg.pStart
 # chart end date of the current period
 srcDateEnd = cfg.pEnd
 
-other.blockVersDist()
-other.voteVersDist()
+other.dailyNodeDist()

@@ -405,8 +405,11 @@ def donutChartL(title,data,date=None,sourceStr=None,authStr=None,saveDate=None,t
     # create colormap
     cmap = cmapCreate(inverse=True)
     theme = cmap
-    ax.set_prop_cycle("color", [theme(1. * i / (len(dSorted['values'])-1))
-                                 for i in range(len(dSorted['values']))])
+    if len(dSorted['values']) > 1:
+        ax.set_prop_cycle("color", [theme(1. * i / (len(dSorted['values'])-1))
+                                     for i in range(len(dSorted['values']))])
+    else:
+        ax.set_prop_cycle("color", colour_hex('dcr_darkblue'))
     # plot chart
     wedges, texts = plt.pie(dSorted['values'],wedgeprops=dict(width=0.5,edgecolor=colour_hex('dcr_grey05'),linewidth=2.5),
                                      radius=1,startangle=90, counterclock=False)

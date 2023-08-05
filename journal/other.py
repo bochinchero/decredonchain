@@ -239,8 +239,8 @@ def dailyHashDist():
                            fmtAxis=charts.autoformatNoDec,
                            fmtAnn=charts.autoformatNoDec,
                            ylim=[0, 150],
-                           annMinPos=0.6,
-                           annMaxPos=0.4)
+                           annMinPos=0.5,
+                           annMaxPos=0.5)
 
 def dailyNodeDist():
     # pull data from the gh repo
@@ -272,7 +272,7 @@ def dailyNodeDist():
                            fmtAnn=charts.autoformatNoDec,
                            ylim=[0, 250],
                            annMinPos=0.2,
-                           annMaxPos=0.2)
+                           annMaxPos=0.3)
     ax.axvspan(cfg.dCsvStart, eEnd, color=charts.colour_hex('dcr_orange'), alpha=0.5)
     plt.text(eMid, 225, 'INCOMPLETE NODE DATA', ha='center', va='center', fontsize=14,
              fontweight='bold',color=charts.colour_hex('dcr_orange'))
@@ -290,9 +290,11 @@ def blockVersDist():
     data = data.loc[:, (data != 0).any(axis=0)]
     data = data.drop(columns=['date'])
     data['version'] = 'blocks'
+    data = data.loc[:, (data != 0).any(axis=0)]
     dataT = data.set_index('version').T
     dataT = dataT.reset_index()
     dataT = dataT.rename(columns={'blocks': 'values', 'index': 'labels'})
+    print(dataT)
     blockStr = 'Distribution across blocks mined on ' + srcDateEnd.strftime("%Y-%m-%d")
     charts.donutChartL('Block Version Distribution', dataT, srcDateEnd, sourceStr=blockStr,
                        authStr='Decred Journal'
@@ -310,6 +312,7 @@ def voteVersDist():
     data = data.loc[:, (data != 0).any(axis=0)]
     data = data.drop(columns=['date'])
     data['version'] = 'votes'
+    data = data.loc[:, (data != 0).any(axis=0)]
     dataT = data.set_index('version').T
     dataT = dataT.reset_index()
     dataT = dataT.rename(columns={'votes': 'values', 'index': 'labels'})

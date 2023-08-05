@@ -91,7 +91,7 @@ def monthlyTxTfrValAdjNtv():
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[cfg.netMonthlyTxxVolNtvMin,cfg.netMonthlyTxxVolNtvMax],
                       annPos1=7,
-                      annPos2=6)
+                      annPos2=5)
 
 def monthlyTxTfrValAdjUSD():
     data = cm.getMetric('dcr','TxTfrValAdjUSD',cfg.dStart,cfg.dEnd)

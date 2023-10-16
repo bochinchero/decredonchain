@@ -35,7 +35,7 @@ data['SASRVRV'] = data['SASRV'] / data['CapRealUSD']
 # create first chart, long term view
 
 # create figure
-fTitle = 'Decred Market Valuations'
+fTitle = 'Markets - Valuations (USD)'
 ax1, xfig1 = charts.fig(fTitle, 'Capitalization (USD)', None, cfg.dStart, cfg.dEnd, DJ=False)
 # plot price
 chartUtils.plot_primary(data['CapMarketUSD'], 'Market Value', 'dcr_black', ax1, 'log', 1,legloc='upper left')
@@ -43,30 +43,68 @@ chartUtils.plot_primary(data['CapRealUSD'], 'Realized Value', 'dcr_green', ax1, 
 chartUtils.plot_primary(data['SASRV'], 'Supply Adjusted Staked Realized Value', 'dcr_blue', ax1, 'log', 1,legloc='upper left')
 chartUtils.plot_primary(data['SRV'], 'Staked Realized Value', 'dcr_orange', ax1, 'log', 1,legloc='upper left')
 ax1.yaxis.set_major_formatter(charts.autoformatMillnoDec)
+ax1.legend(loc="upper left").set_zorder(100)
 # layout
 plt.tight_layout()
 # save figure
-chartUtils.saveFigure(xfig1, 'MarketValuations_Overall',date=cfg.pStart)
+chartUtils.saveFigure(xfig1, 'Markets_USD_Valuations_Overall',date=cfg.pStart)
+
+# create figure Price
+fTitle = 'Markets - Price (USD)'
+ax1b, xfig1b = charts.fig(fTitle, 'Price (USD)', None, cfg.dStart, cfg.dEnd, DJ=False)
+# plot price
+chartUtils.plot_primary(data['PriceUSD'], 'Price (USD)', 'dcr_black', ax1b, 'log', 1,legloc='upper left')
+ax1b.yaxis.set_major_formatter(charts.autoformatNoDec)
+ax1b.legend(loc="upper left").set_zorder(100)
+# layout
+plt.tight_layout()
+# save figure
+chartUtils.saveFigure(xfig1b, 'Markets_USD_Price_Zoomed',date=cfg.pStart)
+
+
 
 # create focused figure for the month
-fTitle = 'Decred Market Valuations'
+# mask data for only the relevant period
+mask = (data.index >= cfg.cStart) & (data.index <= cfg.cEnd)
+datamask = data.loc[mask]
+
+fTitle = 'Markets - Valuations (USD)'
 ax2, xfig2 = charts.fig(fTitle, 'Capitalization (USD)', None, cfg.cStart, cfg.cEnd, DJ=False)
 # plot price
 ax2.axvspan(cfg.pStart, cfg.pEnd, color=chartUtils.colour_hex('dcr_grey50'), alpha=0.1)
-chartUtils.plot_primary(data['CapMarketUSD'], 'Market Value', 'dcr_black', ax2, 'linear', 2,legloc='upper left')
-chartUtils.plot_primary(data['CapRealUSD'], 'Realized Value', 'dcr_green', ax2, 'linear', 2,legloc='upper left')
-chartUtils.plot_primary(data['SASRV'], 'Supply Adjusted Staked Realized Value', 'dcr_blue', ax2, 'linear', 2,legloc='upper left')
-chartUtils.plot_primary(data['SRV'], 'Staked Realized Value', 'dcr_orange', ax2, 'linear', 2,legloc='upper left')
-ax2.set_ylim([100*10e5,500*10e5])
+chartUtils.plot_primary(datamask['CapMarketUSD'], 'Market Value', 'dcr_black', ax2, 'linear', 2)
+chartUtils.plot_primary(datamask['CapRealUSD'], 'Realized Value', 'dcr_green', ax2, 'linear', 2)
+chartUtils.plot_primary(datamask['SASRV'], 'Supply Adjusted Staked Realized Value', 'dcr_blue', ax2, 'linear', 2)
+chartUtils.plot_primary(datamask['SRV'], 'Staked Realized Value', 'dcr_orange', ax2, 'linear', 2)
 ax2.yaxis.set_major_formatter(charts.autoformatMillnoDec)
-#chartUtils.annotBar(ax2,[cfg.pStart])
+ax2.legend(loc="upper left").set_zorder(100)
+
 # layout
 plt.tight_layout()
 # save figure
-chartUtils.saveFigure(xfig2, 'MarketValuations_Zoomed',date=cfg.pStart)
+chartUtils.saveFigure(xfig2, 'Markets_USD_Valuations_Zoomed',date=cfg.pStart)
 
+# create figure Price
 
-stats.windwoStats('CapMarketUSD',cfg.pStart,cfg.pEnd,data,'CapRealUSD','USD')
+charts.dailyPlot(data=data,
+                 dataCol='PriceUSD',
+                 cStart=cfg.cStart,
+                 cEnd=cfg.cEnd,
+                 cTitle='Markets - Price (USD)',
+                 fTitle='Markets_USD_Price_Zoomed',
+                 yLabel='Price (USD)',
+                 uLabel='USD',
+                 hStart=cfg.pStart,
+                 hEnd=cfg.pEnd,
+                 hColor=chartUtils.colour_hex('dcr_grey25'),
+                 dStart=cfg.dStart,
+                 fmtAxis=charts.autoformatNoDec,
+                 fmtAnn=charts.autoformat,
+                 annMid=True)
+
+# update stats file
+stats.windwoStats('PriceUSD',cfg.pStart,cfg.pEnd,data,'PriceUSD','USD')
+stats.windwoStats('CapMarketUSD',cfg.pStart,cfg.pEnd,data,'CapMarketUSD','USD')
 stats.windwoStats('CapRealUSD',cfg.pStart,cfg.pEnd,data,'CapRealUSD','USD')
 stats.windwoStats('SupplyAdjustedSRV',cfg.pStart,cfg.pEnd,data,'SASRV','USD')
 stats.windwoStats('StakedRealizedValUSD',cfg.pStart,cfg.pEnd,data,'SRV','USD')

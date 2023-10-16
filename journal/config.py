@@ -7,8 +7,9 @@ path = '$HOME/'
 fmtt = '%Y-%m-%dT%H:%M:%S'
 
 # evaluation period
-period_start = dt.date(int(2023),int(7),int(1))
-period_end   = dt.date(int(2023),int(8),int(1))
+period_start = dt.date(int(2023),int(9),int(1))
+period_end   = dt.date(int(2023),int(10),int(1))
+previous_start = dt.date(int(2023),int(8),int(1))
 
 # declare offsets
 pdtd14 = pd.Timedelta(14, unit="d")
@@ -22,6 +23,7 @@ dStartCSPP = pd.to_datetime(dt.date(int(2019),int(7),int(1)), utc=True, format=f
 dEnd = pd.to_datetime(dt.date.today() + dt.timedelta(days=60), utc=True, format=fmtt, errors='ignore')
 pStart = pd.to_datetime(period_start, utc=True, format=fmtt, errors='ignore')
 pEnd = pd.to_datetime(period_end, utc=True, format=fmtt, errors='ignore')
+pPrevStart = pd.to_datetime(previous_start, utc=True, format=fmtt, errors='ignore')
 
 dCsvStart = pd.to_datetime(dt.date(int(2022),int(9),int(15)), utc=True, format=fmtt, errors='ignore')
 
@@ -30,23 +32,23 @@ cStart = pStart - pdtd142
 cEnd = pEnd + pdtd14
 
 # ticket price limits
-stakeTpLimMax = 550
-stakeTpLimMin = 100
+stakeTpLimMax = 1000
+stakeTpLimMin = 0
 
 # stake participation limits
 stakeSpLimMax = 75
-stakeSpLimMin = 55
+stakeSpLimMin = 45
 
 # pool value limits
 stakePvLimMax = 12000000
-stakePvLimMin = 8000000
+stakePvLimMin = 7000000
 
 # mining axis limits
 netHashLimMax = 150000
-netHashLimMin = 0
+netHashLimMin = -25000
 
 # TxTfrValAdjNtv daily axis limits
-netDailyTxVolNtvMax = 1000000
+netDailyTxVolNtvMax = 1200000
 netDailyTxVolNtvMin = -200000
 
 # TxTfrValAdjUSD daily axis limits
@@ -63,8 +65,8 @@ netMonthlyTxxVolUSDMin = 0
 
 
 # cspp daily axis limits
-csppVolMax = 900000
-csppVolMin = 0
+csppVolMax = 1200000
+csppVolMin = -200000
 
 # cspp monthly axis limits
 csppMVolMax = 20000000

@@ -328,7 +328,7 @@ def plot_primary(data, label, colour, ax=None, yscale=None, lw=None,legloc=None,
     ax.plot(data, color=colour_hex(colour),label=label,linewidth=lw,zorder=20)
     ax.set_yscale(yscale)
     if legloc is not None:
-        ax.legend(loc=legloc)
+        ax.legend(loc=legloc).set_zorder(1)
     return
 
 def has_twin(ax):

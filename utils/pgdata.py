@@ -74,3 +74,26 @@ def rvUSD():
     # set index
     fData = fData.set_index('date')
     return fData
+
+def rvBTC():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/rvBTC.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData
+
+
+def powRewardDist():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/powRewardDist.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData

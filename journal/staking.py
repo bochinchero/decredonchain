@@ -114,7 +114,7 @@ def dailyTicketsBought():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
-                     ylim=[0, 4000],
+                     ylim=[-1000, 5000],
                      annMid=True)
 
 def monthlyTicketsBought():
@@ -138,7 +138,7 @@ def monthlyTicketsBought():
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[0, 100000],
                       annPos1=3,
-                      annPos2=2)
+                      annPos2=1)
 
 def dailyTicketsVoted():
     data = pgdata.ticketVotes()
@@ -157,7 +157,7 @@ def dailyTicketsVoted():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
-                     ylim=[0, 3000],
+                     ylim=[-1000, 6000],
                      annMid=True)
 
 def monthlyTicketsVoted():
@@ -181,4 +181,4 @@ def monthlyTicketsVoted():
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[0, 100000],
                       annPos1=3,
-                      annPos2=2)
+                      annPos2=1)

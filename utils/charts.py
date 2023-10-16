@@ -56,6 +56,9 @@ def autoformatMillnoDec(x,pos=None):
         return "{:,.0f}".format(x)
 
 
+def autoformatSats(x,pos=None):
+    return "{:,.8f}".format(x)
+
 def colour_hex(colour):
     # this function returns the hex value of the selected colour
     df = pd.DataFrame({'colour': ['dcr_turq', 'dcr_blue', 'dcr_darkblue','dcr_orange','dcr_orange50','dcr_green','dcr_green50','dcr_altblue','dcr_altblue2','dcr_black','dcr_lightblue','dcr_grey50','dcr_grey15','dcr_grey25','dcr_grey05',],'hex': ['#41BF53','#2970FF','#091440','#ED6D47','#feb8a5','#41BF53','#c6eccb','#69D3F5','#2252a3','#09182D','#e9f8f3','#596D81','#E7EAED','#C4CBD2','#F3F6F6']})
@@ -694,6 +697,7 @@ def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
     plt.stackplot(data.index, dataY, labels=labels)
     if legend is None:
         ax.legend(loc='upper left')
+
     # check ylim
     if ylim is not None:
         ax.set_ylim(ylim)

@@ -206,7 +206,7 @@ def dailytxCount():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
                      annMid=True,
-                     ylim=[0,12000])
+                     ylim=[-5000,20000])
 
 def monthlyTxCount():
     data = dcrdata_api.txcount()
@@ -226,7 +226,7 @@ def monthlyTxCount():
                       fmtAxis=charts.autoformatNoDec,
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[0,300000],
-                      annPos1=4,
+                      annPos1=4.5,
                       annPos2=3)
 
 def dailyBlockSize():
@@ -247,7 +247,7 @@ def dailyBlockSize():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
                      annMid=True,
-                     ylim=[0,20])
+                     ylim=[-5,20])
 
 def monthlyblockchainSize():
     data = dcrdata_api.BlockchainSize()
@@ -269,7 +269,7 @@ def monthlyblockchainSize():
                       fmtAxis=charts.autoformatNoDec,
                       fmtAnn=charts.autoformat,
                       ylim=[0,15000],
-                      annPos1=2,
+                      annPos1=1.5,
                       annPos2=1,
                       disATH=True)
 
@@ -293,7 +293,7 @@ def monthlyBlockSize():
                       fmtAnn=charts.autoformat,
                       ylim=[0,500],
                       annPos1=4,
-                      annPos2=3)
+                      annPos2=2)
 
 def dailyBlockTime():
     data = dcrdata_api.blockTime()
@@ -313,7 +313,7 @@ def dailyBlockTime():
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
                      annMid=True,
-                     ylim=[0,500])
+                     ylim=[-100,500])
 
 def monthlyBlockTime():
     data = dcrdata_api.blockTime()

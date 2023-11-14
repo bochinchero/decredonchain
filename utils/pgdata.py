@@ -97,3 +97,25 @@ def powRewardDist():
     # set index
     fData = fData.set_index('date')
     return fData
+
+def ltres():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/ltres.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData
+
+def dtres():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/dtres.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    # set index
+    fData = fData.set_index('date')
+    return fData

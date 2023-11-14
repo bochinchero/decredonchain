@@ -1,25 +1,30 @@
 import config as cfg
 import utils.charts as charts
+import utils.pgdata as pgdata
 import utils.dcrdata_api as dcrdata_api
 import pandas as pd
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import utils.cm as cm
 import utils.stats
-
+import time
 
 def monthlyBalance():
     # get data from API
-    treasury = dcrdata_api.treasury(interval='month')
-    legacy = dcrdata_api.treasuryLegacy(interval='month')
+    treasury = pgdata.dtres()
+    treasuryM = treasury.groupby(pd.Grouper(freq='MS')).agg({'sent': 'sum', 'received': 'sum', 'net': 'sum','balance':'first'})
+    legacy = pgdata.ltres()
+    legacyM = legacy.groupby(pd.Grouper(freq='MS')).agg({'sent': 'sum', 'received': 'sum', 'net': 'sum','balance':'first'})
+    treasuryM = treasuryM.reset_index()
+    legacyM = legacyM.reset_index()
     # create date array to start
     date_rng = pd.date_range(start=cfg.dStart, end=cfg.pEnd, freq='MS')
     data = pd.DataFrame(date_rng, columns=['date'])
     # rename and pick out data from df for decentralised treasury
-    dataTreasury = treasury[['date', 'balance']].copy()
+    dataTreasury = treasuryM[['date', 'balance']].copy()
     dataTreasury = dataTreasury.rename(columns={"balance": "treasury"})
     # rename and pick out data from df for legacy treasury
-    dataLegacy = legacy[['date', 'balance']].copy()
+    dataLegacy = legacyM[['date', 'balance']].copy()
     dataLegacy = dataLegacy.rename(columns={"balance": "legacy"})
     # merge into a single df
     data = data.merge(dataLegacy, left_on='date', right_on='date', how='left')
@@ -55,16 +60,20 @@ def monthlyBalance():
 
 def monthlyFlows():
     # get data from API
-    tt = dcrdata_api.treasury(interval='month')
-    legacy = dcrdata_api.treasuryLegacy(interval='month')
+    treasury = pgdata.dtres()
+    treasuryM = treasury.groupby(pd.Grouper(freq='MS')).agg({'sent': 'sum', 'received': 'sum', 'net': 'sum','balance':'first'})
+    legacy = pgdata.ltres()
+    legacyM = legacy.groupby(pd.Grouper(freq='MS')).agg({'sent': 'sum', 'received': 'sum', 'net': 'sum','balance':'first'})
+    treasuryM = treasuryM.reset_index()
+    legacyM = legacyM.reset_index()
     # create date array to start
     date_rng = pd.date_range(start=cfg.dStart, end=cfg.pEnd, freq='MS')
     data = pd.DataFrame(date_rng, columns=['date'])
     data.drop(data.tail(1).index, inplace=True)
-    dataT = data.merge(tt, left_on='date', right_on='date', how='left')
+    dataT = data.merge(treasuryM, left_on='date', right_on='date', how='left')
     dataT = dataT.fillna(method='ffill')
     dataT = dataT.fillna(0)
-    dataL = data.merge(legacy, left_on='date', right_on='date', how='left')
+    dataL = data.merge(legacyM, left_on='date', right_on='date', how='left')
     dataL = dataL.fillna(method='ffill')
     dataL = dataL.fillna(0)
     dataL = dataL.set_index('date')
@@ -130,17 +139,21 @@ def monthlyFlows():
 
 def monthlyBalanceUSD():
     # get data from API
-    treasury = dcrdata_api.treasury(interval='month')
-    legacy = dcrdata_api.treasuryLegacy(interval='month')
+    treasury = pgdata.dtres()
+    treasuryM = treasury.groupby(pd.Grouper(freq='MS')).agg({'sent': 'sum', 'received': 'sum', 'net': 'sum','balance':'first'})
+    legacy = pgdata.ltres()
+    legacyM = legacy.groupby(pd.Grouper(freq='MS')).agg({'sent': 'sum', 'received': 'sum', 'net': 'sum','balance':'first'})
+    treasuryM = treasuryM.reset_index()
+    legacyM = legacyM.reset_index()
     PriceUSD = cm.getMetric('dcr', 'PriceUSD', cfg.dStart, cfg.dEnd)
     # create date array to start
     date_rng = pd.date_range(start=cfg.dStart, end=cfg.pEnd, freq='MS')
     data = pd.DataFrame(date_rng, columns=['date'])
     # rename and pick out data from df for decentralised treasury
-    dataTreasury = treasury[['date', 'balance']].copy()
+    dataTreasury = treasuryM[['date', 'balance']].copy()
     dataTreasury = dataTreasury.rename(columns={"balance": "treasury"})
     # rename and pick out data from df for legacy treasury
-    dataLegacy = legacy[['date', 'balance']].copy()
+    dataLegacy = legacyM[['date', 'balance']].copy()
     dataLegacy = dataLegacy.rename(columns={"balance": "legacy"})
     # merge into a single df
     data = data.merge(dataLegacy, left_on='date', right_on='date', how='left')
@@ -180,8 +193,10 @@ def monthlyBalanceUSD():
 def tStats():
     # get data from API
     PriceUSD = cm.getMetric('dcr', 'PriceUSD', cfg.dStart, cfg.dEnd)
-    treasury = dcrdata_api.treasury(interval='day')
-    legacy = dcrdata_api.treasuryLegacy(interval='day')
+    treasury = pgdata.dtres()
+    legacy = pgdata.ltres()
+    treasury = treasury.reset_index()
+    legacy = legacy.reset_index()
     # rename and pick out data from df for decentralised treasury
     dataTreasury = treasury[['date', 'balance']].copy()
     dataTreasury = dataTreasury.rename(columns={"balance": "treasury"})

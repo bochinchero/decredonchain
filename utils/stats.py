@@ -3,18 +3,27 @@ from datetime import date
 import os
 import numpy as np
 
-def autoFormat(num):
-    if isinstance(num, int):
-        output = '{:,.0f}'.format(num)
-    else:
-        if num.is_integer():
+def autoFormat(num,raw=None):
+    if raw is None:
+        if isinstance(num, int):
             output = '{:,.0f}'.format(num)
         else:
-            output = '{:,.2f}'.format(num)
+            if num.is_integer():
+                output = '{:,.0f}'.format(num)
+            else:
+                output = '{:,.2f}'.format(num)
+    if raw is not None:
+        if isinstance(num, int):
+            output = '{:,.0f}'.format(num)
+        else:
+            if num.is_integer():
+                output = '{:,.0f}'.format(num)
+            else:
+                output = '{:,.8f}'.format(num)
     return output
 
 
-def windwoStats(id,dStart,dEnd,rawData,col,unitStr,sumReq=None,ignoreATH=None):
+def windwoStats(id,dStart,dEnd,rawData,col,unitStr,sumReq=None,ignoreATH=None,raw=None):
     # this function is for th
     # create file path based on the start date
     relative_path_base = '../../dcrcharts/'
@@ -57,20 +66,20 @@ def windwoStats(id,dStart,dEnd,rawData,col,unitStr,sumReq=None,ignoreATH=None):
         newATH = ''
     # create df with new row entry
     sData = pd.DataFrame({'id': id,
-                          'Open': autoFormat(data.iloc[0]),
-                          'Close': autoFormat(data.iloc[-1]),
-                          'High': autoFormat(data.max()),
+                          'Open': autoFormat(data.iloc[0],raw),
+                          'Close': autoFormat(data.iloc[-1],raw),
+                          'High': autoFormat(data.max(),raw),
                           'High Date': data.index[np.argmax(data)].date(),
-                          'Low': autoFormat(data.min()),
+                          'Low': autoFormat(data.min(),raw),
                           'Low Date': data.index[np.argmin(data)].date(),
-                          'MoMean': autoFormat(data.mean()),
+                          'MoMean': autoFormat(data.mean(),raw),
                           'MoMeanChg': autoFormat(MoMeanChg),
-                          'MoSum': autoFormat(valSum),
+                          'MoSum': autoFormat(valSum,raw),
                           'MoSumChg': autoFormat(MoSumChg),
-                          'PrevMoSum' : autoFormat(prevSumMo),
-                          'PrevMoMean': autoFormat(prevMeanMo),
+                          'PrevMoSum' : autoFormat(prevSumMo,raw),
+                          'PrevMoMean': autoFormat(prevMeanMo,raw),
                           'Units':unitStr,
-                          'PrevMaxVal':autoFormat(prevMaxY),
+                          'PrevMaxVal':autoFormat(prevMaxY,raw),
                           'PrevMaxDate':prevMaxX,
                           'New ATH': newATH},
                          index=[0]

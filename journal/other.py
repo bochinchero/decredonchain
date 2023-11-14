@@ -118,6 +118,15 @@ def vspDist():
     fnoteList.append(voteDistStr) # append source string
     charts.donutChartL('Live Ticket Distribution', voteDist, srcDateEnd, sourceStr=fnoteList,
                        authStr='Decred Journal',saveDate=srcDateStart)
+
+    # create df for Overall Missed Ticket Distribution
+    rowSolo = rowSolo.reset_index()
+    voteDistTable = pd.concat([rowSolo, vspData], axis=0)
+    voteDistTable = voteDistTable.rename(columns={'id':'labels','voting':'values'})
+    fnoteList[-1] ='Data from decred.org/vsp and dcrdata.org on '+ srcDateEnd.strftime("%Y-%m-%d")
+    charts.donutChartS('Overall Live Ticket Distribution',voteDistTable,
+                                   ['Voting by','Tickets'],srcDateEnd,sourceStr=fnoteList,
+                       authStr='Decred Journal',saveDate=srcDateStart,showTotal=True)
     vspData = vspData.reset_index()
     vspData = vspData.rename(columns={'id':'labels','voting':'values'})
     fnoteList[-1] ='Data from decred.org/vsp on '+ srcDateEnd.strftime("%Y-%m-%d")

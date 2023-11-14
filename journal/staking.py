@@ -121,7 +121,7 @@ def monthlyTicketsBought():
     # grab the missed votes from dcrdata
     data = pgdata.ticketVotes()
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'tickets': 'sum', 'votes':'sum'})
-    dataM.drop(dataM.tail(1).index, inplace=True)
+    dataM = dataM[dataM.index < cfg.pEnd]
     ax, fig = charts.monthlyBar(data=dataM,
                       dataCol='tickets',
                       bColour='dcr_green',
@@ -164,7 +164,7 @@ def monthlyTicketsVoted():
     # grab the missed votes from dcrdata
     data = pgdata.ticketVotes()
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'tickets': 'sum', 'votes':'sum'})
-    dataM.drop(dataM.tail(1).index, inplace=True)
+    dataM = dataM[dataM.index < cfg.pEnd]
     ax, fig = charts.monthlyBar(data=dataM,
                       dataCol='votes',
                       bColour='dcr_green',

@@ -36,39 +36,4 @@ srcDateStart = cfg.pStart
 # chart end date of the current period
 srcDateEnd = cfg.pEnd
 
-staking.dailyTicketsVoted()
-staking.dailyTicketsBought()
-
-
-
-# pull data from the gh repo
-alldata = pgdata.powRewardDist()
-# mask data for only the relevant period (what's show in the charts)
-mask = (alldata.index < cfg.cEnd) & (alldata.index >= cfg.cStart)
-data = alldata.loc[mask]
-# remove columns with only 0
-data = data.loc[:, (data != 0).any(axis=0)]
-data = data[data.columns[::-1]]
-# extract list of column names
-labels = list(data.columns.values)
-data[labels] = data[labels].div(data.sum(axis=1), axis=0).multiply(100)
-# dates for the incorrect data
-fmtt = '%Y-%m-%dT%H:%M:%S'
-ax, fig = charts.stackedAreaPlot(data=data,
-                       labels=labels,
-                       cStart=cfg.cStart,
-                       cEnd=cfg.cEnd,
-                       cTitle='Daily PoW Reward Distribution',
-                       fTitle='Daily_PoWRewardDist',
-                       yLabel='Block Reward Distribution (%)',
-                       uLabel='Reward',
-                       hStart=cfg.pStart,
-                       hEnd=cfg.pEnd,
-                       hColor=charts.colour_hex('dcr_grey25'),
-                       dStart=cfg.dStart,
-                       fmtAxis=charts.autoformatNoDec,
-                       fmtAnn=charts.autoformatNoDec,
-                       ylim=[0, 100],
-                       legend=False,
-                       disAnn=True)
-
+treasury.tStats()

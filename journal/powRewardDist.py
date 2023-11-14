@@ -46,16 +46,14 @@ countData = alldata.astype(bool).sum(axis=1)
 # convert to dataframe
 countData = countData.to_frame()
 countData = countData.rename(columns={0:'count'})
-# reset ind No
-print(countData)
-print(countData.dtypes)
+
 ax2, fig2 = charts.dailyPlot(data=countData,
                  dataCol='count',
                  cStart=cfg.cStart,
                  cEnd=cfg.cEnd,
                  cTitle='Network - Daily PoW Block Reward Address Count',
                  fTitle='Network_Daily_PoW_AddressCount',
-                 yLabel='Addresses',
+                 yLabel='Address Count',
                  uLabel='Addresses',
                  hStart=cfg.pStart,
                  hEnd=cfg.pEnd,
@@ -65,3 +63,5 @@ ax2, fig2 = charts.dailyPlot(data=countData,
                  fmtAnn=charts.autoformatNoDec,
                  ylim=[-100,300],
                  annMid=True)
+
+stats.windwoStats('PoWAddressCount',cfg.pStart,cfg.pEnd,countData,'count','addresses')

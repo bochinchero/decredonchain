@@ -105,7 +105,7 @@ other.missedDist()
 time.sleep(sleepTmr)
 other.dailyNodeDist()
 time.sleep(sleepTmr)
-other.dailyHashDist()
+#other.dailyHashDist()
 time.sleep(sleepTmr)
 
 print('7')

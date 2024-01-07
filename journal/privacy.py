@@ -87,8 +87,8 @@ def monthlyVolumeDCR():
                       fmtAxis=charts.autoformatMillnoDec,
                       fmtAnn=charts.autoformatNoDec,
                       ylim=[cfg.csppMVolMin,cfg.csppMVolMax],
-                      annPos1=2,
-                      annPos2=2)
+                      annPos1=3,
+                      annPos2=1)
 
 def monthlyVolumeUSD():
     data = dcrdata_api.privacypart()

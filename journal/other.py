@@ -134,16 +134,17 @@ def vspDist():
                                    ['Voting Service Providers','Tickets'],srcDateEnd,sourceStr=fnoteList,
                        authStr='Decred Journal',saveDate=srcDateStart,showTotal=True)
 
-def missedDist():
-    # this function generates 2 donut charts, one for the overall distribution of missed tickets
-    # and another for the distribution of missed tickets among VSPs.
+def revokedDist():
+    # this function generates 2 donut charts, one for the overall distribution of revoked tickets
+    # and another for the distribution of revoked tickets among VSPs.
     # get total missed tikcets
-    missedTot = dcrdata_api.missedvotes()
+    missedTot = pgdata.ticketVotes()
     # filter for the date range
-    mask = (missedTot.index > srcDateStart) & (missedTot.index <= srcDateEnd)
+    mask = (missedTot.index >= srcDateStart) & (missedTot.index < srcDateEnd)
     missedTot = missedTot.loc[mask]
     # sum all row values
-    missedTotSum = missedTot['missed'].sum()
+    missedTotSum = missedTot['revoked'].sum()
+    print(missedTotSum)
     # get vsp data from start date
     vspDataStart = snapcsv.vspDist(srcDateStart)
     vspMissedVotesStart = vspDataStart[['id', 'revoked']].copy()
@@ -212,20 +213,86 @@ def missedDist():
     # rename columns to fit chart format
     missedDist = missedDist.reset_index()
     missedDist = missedDist.rename(columns={'id':'labels','revoked':'values'})
+    missedDist['values'] = missedDist['values'].astype(int)
     vspMissed = vspMissed.reset_index()
     vspMissed = vspMissed.rename(columns={'id':'labels','revoked':'values'})
+    vspMissed['values'] = vspMissed['values'].astype(int)
     # source text
     missedDistStr='Data from decred.org/vsp and dcrdata.org between '\
                   + srcDateStart.strftime("%Y-%m-%d") + ' and ' + srcDateEnd.strftime("%Y-%m-%d")
     fnoteList.reverse()
     fnoteList.append(missedDistStr) # append source string
-    # generate chart for Overall Missed Ticket distribution
-    charts.donutChartL('Missed Ticket Distribution',missedDist,srcDateEnd,sourceStr=fnoteList,authStr='Decred Journal',saveDate=srcDateStart)
 
+    # generate chart for Overall Missed Ticket distribution
+    charts.donutChartL('Revoked Ticket Distribution',missedDist,srcDateEnd,sourceStr=fnoteList,authStr='Decred Journal',saveDate=srcDateStart)
+
+    charts.donutChartS('Voting Service Provider (VSP) - Revoked Ticket Distribution',vspMissed,
+                                   ['Voting Service Providers','Revoked'],srcDateEnd,sourceStr=fnoteList,
+                       authStr='Decred Journal',saveDate=srcDateStart,showTotal=True)
+
+
+def vspmissedDist():
+    # get vsp data from start date
+    vspDataStart = snapcsv.vspDist(srcDateStart)
+    vspMissedVotesStart = vspDataStart[['id', 'missed']].copy()
+
+    # get vsp data from end date
+    vspDataEnd = snapcsv.vspDist(srcDateEnd)
+    # convert last updated to pd date time, tz aware
+    vspDataEnd['lastupdated'] = pd.to_datetime(vspDataEnd['lastupdated'], utc=True, errors='ignore')
+    # calculate days since last update
+    vspDataEnd['daysSinceUpdate'] = (srcDateEnd - vspDataEnd['lastupdated']).dt.days + 1
+    # day limit for still showing in chart - cutoff threshold
+    dayLimit = 7
+    # create footnote list
+    fnoteList = []
+
+    # update rows for VSPs that are only slightly out of date
+    for index, row in vspDataEnd.iterrows():
+        idStr = row['id']
+        # check if there are stale vsps below the cutoff threshold
+        if (row['daysSinceUpdate'] > 0):
+            lastUpdateStr = str(row['lastupdated'].date())
+            newStr = idStr # create updated id string
+            fnoteCt = ''
+            for i in range(len(fnoteList)+1):
+                fnoteCt = fnoteCt+ ('*')
+            newStr = newStr + fnoteCt
+            if row['lastupdated'].date() < srcDateStart.date():
+                vspDataEnd = vspDataEnd.drop(index)
+                vspMissedVotesStart = vspMissedVotesStart.drop(index)
+                fnoteStr = fnoteCt + idStr + ' removed due to stale data, last updated on ' + lastUpdateStr + "."
+            else:
+                vspDataEnd.at[index, 'id'] = newStr  # update id string in dataframe
+                vspMissedVotesStart.at[index, 'id'] = newStr  # update id string in dataframe
+                fnoteStr = fnoteCt + 'Incomplete data for ' + idStr + ', last update on ' + lastUpdateStr + '.'
+            fnoteList.append(fnoteStr)
+
+    vspMissedVotesEnd = vspDataEnd[['id', 'missed']].copy()
+    vspMissedVotesStart = vspMissedVotesStart.set_index('id')
+    vspMissedVotesEnd = vspMissedVotesEnd.set_index('id')
+    # get difference between start/end dates
+    vspMissed = vspMissedVotesEnd.subtract(vspMissedVotesStart, fill_value=0)
+    # remove rows for VSPs that have been removed since last snapshot
+    for index, row in vspMissed.iterrows():
+        idStr = index
+        # check if there are stale vsps below the cutoff threshold
+        if row['missed'] < 0:
+            newStr = idStr # create updated id string
+            fnoteCt = ''
+            for i in range(len(fnoteList)+1):
+                fnoteCt = fnoteCt+ ('*')
+            vspMissed = vspMissed.drop(index)
+            fnoteStr = fnoteCt + idStr + ' removed since last snapshot.'
+            fnoteList.append(fnoteStr)
+    # get sum of missed tickets by VSPs
+    vspMissed = vspMissed.reset_index()
+    vspMissed = vspMissed.rename(columns={'id':'labels','missed':'values'})
+    # drop 0 values
+    vspMissed = vspMissed.loc[~(vspMissed == 0).all(axis=1)]
     charts.donutChartS('Voting Service Provider (VSP) - Missed Ticket Distribution',vspMissed,
                                    ['Voting Service Providers','Missed'],srcDateEnd,sourceStr=fnoteList,
                        authStr='Decred Journal',saveDate=srcDateStart,showTotal=True)
-
 
 def dailyHashDist():
     data = snapcsv.dailyHashDist()

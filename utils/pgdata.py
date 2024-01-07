@@ -119,3 +119,15 @@ def dtres():
     # set index
     fData = fData.set_index('date')
     return fData
+
+def networkhashps():
+    # create url
+    url = 'https://raw.githubusercontent.com/bochinchero/dcrpgdata/master/data/networkhashps.csv'
+    # create pd dataframe with raw csv data
+    fData = pd.read_csv(url)
+    fmtt = '%Y-%m-%d'
+    fData['date'] = pd.to_datetime(fData['date'], utc=True, format=fmtt, errors='ignore')
+    fData = fData.drop(columns=['first_block', 'last_block','block_count'])
+    # set index
+    fData = fData.set_index('date')
+    return fData

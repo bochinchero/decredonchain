@@ -252,28 +252,28 @@ def saveFigure(figx, figTitle, path=None,date=None):
             if not os.path.exists(relative_path_sub_1):
                 # Create a new directory because it does not exist
                 os.makedirs(relative_path_sub_1)
-            relative_path_1 = relative_path_sub_1 + figTitle + '.webp'
+            relative_path_1 = relative_path_sub_1 + figTitle + '.png'
             path_1 = (mod_path / relative_path_1).resolve()
 
             relative_path_sub_2 = relative_path_base + date.strftime("%Y-%m") + '/700/'
             if not os.path.exists(relative_path_sub_2):
                 # Create a new directory because it does not exist
                 os.makedirs(relative_path_sub_2)
-            relative_path_2 = relative_path_sub_2 + figTitle + '.webp'
+            relative_path_2 = relative_path_sub_2 + figTitle + '.png'
 
             relative_path_sub_3 = relative_path_base + date.strftime("%Y-%m") + '/1920/'
             if not os.path.exists(relative_path_sub_3):
                 # Create a new directory because it does not exist
                 os.makedirs(relative_path_sub_3)
-            relative_path_3 = relative_path_sub_3 + figTitle + '.webp'
+            relative_path_3 = relative_path_sub_3 + figTitle + '.png'
 
             path_1 = (mod_path / relative_path_1).resolve()
             path_2 = (mod_path / relative_path_2).resolve()
             path_3 = (mod_path / relative_path_3).resolve()
     # this function saves a figure
-    figx.savefig(path_1, dpi=100, format='webp')
-    figx.savefig(path_2, dpi=60, format='webp')
-    figx.savefig(path_3, dpi=160, format='webp')
+    figx.savefig(path_1, dpi=100)
+    figx.savefig(path_2, dpi=60)
+    figx.savefig(path_3, dpi=160)
     plt.close('all')
 
 

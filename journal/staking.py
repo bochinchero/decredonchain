@@ -69,34 +69,6 @@ def dailyTicketPoolValue():
                      ylim=[cfg.stakePvLimMin,cfg.stakePvLimMax],
                      annMid=True)
 
-def monthlyMissedVotes():
-    # grab the missed votes from dcrdata
-    data = dcrdata_api.missedvotes()
-    utils.stats.windwoStats('missedVotes',cfg.pStart,cfg.pEnd,data,'missed','votes',sumReq=True)
-    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'missed': 'sum'})
-    dataM.drop(dataM.tail(1).index, inplace=True)
-    ax, fig = charts.monthlyBar(data=dataM,
-                      dataCol='missed',
-                      bColour='dcr_green',
-                      cStart=cfg.dStart,
-                      cEnd=cfg.pEnd,
-                      cTitle='Staking - Monthly Missed Tickets',
-                      fTitle='Staking_Monthly_Missed_Tickets',
-                      yLabel='Missed Tickets',
-                      uLabel='Tickets',
-                      hStart=cfg.pStart,
-                      hColor=colorWindow,
-                      dStart=cfg.dStart,
-                      fmtAxis=charts.autoformatMillnoDec,
-                      fmtAnn=charts.autoformatNoDec,
-                      ylim=[0, 2000],
-                      annPos1=6,
-                      annPos2=4)
-
-
-
-
-
 def dailyTicketsBought():
     data = pgdata.ticketVotes()
     utils.stats.windwoStats('tickets',cfg.pStart,cfg.pEnd,data,'tickets','tickets',sumReq=True)
@@ -179,6 +151,156 @@ def monthlyTicketsVoted():
                       dStart=cfg.dStart,
                       fmtAxis=charts.autoformatNoDec,
                       fmtAnn=charts.autoformatNoDec,
-                      ylim=[0, 100000],
+                      ylim=[0, 2500],
                       annPos1=3,
                       annPos2=1)
+
+def dailyTicketsMissed():
+    data = pgdata.ticketVotes()
+    utils.stats.windwoStats('votesMissed',cfg.pStart,cfg.pEnd,data,'missed','votes',sumReq=True)
+    ax, fig = charts.dailyPlot(data=data,
+                     dataCol='missed',
+                     cStart=cfg.cStart,
+                     cEnd=cfg.cEnd,
+                     cTitle='Staking - Daily Missed Votes',
+                     fTitle='Staking_Daily_Tickets_Missed',
+                     yLabel='Votes',
+                     uLabel='Votes',
+                     hStart=cfg.pStart,
+                     hEnd=cfg.pEnd,
+                     hColor=colorWindow,
+                     dStart=cfg.dStart,
+                     fmtAxis=charts.autoformatNoDec,
+                     fmtAnn=charts.autoformatNoDec,
+                     ylim=[-50, 200],
+                     annMid=True)
+
+def monthlyTicketsMissed():
+    # grab the missed votes from dcrdata
+    data = pgdata.ticketVotes()
+    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'tickets': 'sum', 'missed':'sum'})
+    dataM = dataM[dataM.index < cfg.pEnd]
+    ax, fig = charts.monthlyBar(data=dataM,
+                      dataCol='missed',
+                      bColour='dcr_green',
+                      cStart=cfg.dStart,
+                      cEnd=cfg.pEnd,
+                      cTitle='Staking - Monthly Votes Missed',
+                      fTitle='Staking_Monthly_Tickets_Missed',
+                      yLabel='Votes',
+                      uLabel='Votes',
+                      hStart=cfg.pStart,
+                      hColor=colorWindow,
+                      dStart=cfg.dStart,
+                      fmtAxis=charts.autoformatNoDec,
+                      fmtAnn=charts.autoformatNoDec,
+                      ylim=[0, 2500],
+                      annPos1=4,
+                      annPos2=1)
+
+
+def dailyTicketsExpired():
+    data = pgdata.ticketVotes()
+    utils.stats.windwoStats('ticketExpired',cfg.pStart,cfg.pEnd,data,'expired','tickets',sumReq=True)
+    ax, fig = charts.dailyPlot(data=data,
+                     dataCol='expired',
+                     cStart=cfg.cStart,
+                     cEnd=cfg.cEnd,
+                     cTitle='Staking - Daily Expired Tickets',
+                     fTitle='Staking_Daily_Tickets_Expired',
+                     yLabel='Tickets',
+                     uLabel='Tickets',
+                     hStart=cfg.pStart,
+                     hEnd=cfg.pEnd,
+                     hColor=colorWindow,
+                     dStart=cfg.dStart,
+                     fmtAxis=charts.autoformatNoDec,
+                     fmtAnn=charts.autoformatNoDec,
+                     ylim=[-50, 200],
+                     annMid=True)
+
+def monthlyTicketsExpired():
+    # grab the missed votes from dcrdata
+    data = pgdata.ticketVotes()
+    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'tickets': 'sum', 'expired':'sum'})
+    dataM = dataM[dataM.index < cfg.pEnd]
+    ax, fig = charts.monthlyBar(data=dataM,
+                      dataCol='expired',
+                      bColour='dcr_green',
+                      cStart=cfg.dStart,
+                      cEnd=cfg.pEnd,
+                      cTitle='Staking - Monthly Tickets Expired',
+                      fTitle='Staking_Monthly_Tickets_Expired',
+                      yLabel='Tickets',
+                      uLabel='Tickets',
+                      hStart=cfg.pStart,
+                      hColor=colorWindow,
+                      dStart=cfg.dStart,
+                      fmtAxis=charts.autoformatNoDec,
+                      fmtAnn=charts.autoformatNoDec,
+                      ylim=[0, 2500],
+                      annPos1=3,
+                      annPos2=1)
+
+
+def dailyTicketsRevoked():
+    data = pgdata.ticketVotes()
+    utils.stats.windwoStats('ticketsRevoked',cfg.pStart,cfg.pEnd,data,'revoked','tickets',sumReq=True)
+    ax, fig = charts.dailyPlot(data=data,
+                     dataCol='revoked',
+                     cStart=cfg.cStart,
+                     cEnd=cfg.cEnd,
+                     cTitle='Staking - Daily Revoked Tickets',
+                     fTitle='Staking_Daily_Tickets_Revoked',
+                     yLabel='Tickets',
+                     uLabel='Tickets',
+                     hStart=cfg.pStart,
+                     hEnd=cfg.pEnd,
+                     hColor=colorWindow,
+                     dStart=cfg.dStart,
+                     fmtAxis=charts.autoformatNoDec,
+                     fmtAnn=charts.autoformatNoDec,
+                     ylim=[-50, 200],
+                     annMid=True)
+
+def monthlyTicketsRevoked():
+    # grab the missed votes from dcrdata
+    data = pgdata.ticketVotes()
+    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'tickets': 'sum', 'revoked':'sum'})
+    print(dataM)
+    dataM = dataM[dataM.index < cfg.pEnd]
+    ax, fig = charts.monthlyBar(data=dataM,
+                      dataCol='revoked',
+                      bColour='dcr_green',
+                      cStart=cfg.dStart,
+                      cEnd=cfg.pEnd,
+                      cTitle='Staking - Monthly Tickets Revoked',
+                      fTitle='Staking_Monthly_Tickets_Revoked',
+                      yLabel='Tickets',
+                      uLabel='Tickets',
+                      hStart=cfg.pStart,
+                      hColor=colorWindow,
+                      dStart=cfg.dStart,
+                      fmtAxis=charts.autoformatNoDec,
+                      fmtAnn=charts.autoformatNoDec,
+                      ylim=[0, 2500],
+                      annPos1=3,
+                      annPos2=1)
+
+
+def revokeDistribution():
+    # pull data from the gh repo
+    alldata = pgdata.ticketVotes()
+    # mask data for only the relevant period
+    mask = (alldata.index >= cfg.pStart) & (alldata.index < cfg.pEnd)
+    data = alldata.loc[mask]
+    dataM = data.groupby(pd.Grouper(freq='MS')).agg({'missed': 'sum', 'expired': 'sum'})
+    dataM = dataM.reset_index()
+    dataM = dataM.drop(columns=['date'])
+    dataT = dataM.T.reset_index()
+    dataT = dataT.set_axis(['labels', 'values'], axis=1)
+    blockStr = 'Distribution across revocations between ' + cfg.pStart.strftime(
+        "%Y-%m-%d") + ' and ' + cfg.pEnd.strftime("%Y-%m-%d")
+    charts.donutChartL('Monthly Ticket Revocation Distribution', dataT, cfg.pEnd, sourceStr=blockStr,
+                       authStr='Decred Journal'
+                       , saveDate=cfg.pStart)

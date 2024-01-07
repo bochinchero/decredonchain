@@ -36,4 +36,4 @@ srcDateStart = cfg.pStart
 # chart end date of the current period
 srcDateEnd = cfg.pEnd
 
-treasury.tStats()
+other.revokedDist()

@@ -1,24 +1,31 @@
 import config as cfg
 import utils.charts as charts
+import utils.chartUtils as chartUtils
 import utils.dcrdata_api as dcrdata_api
 import utils.cm as cm
 import pandas as pd
 import utils.stats
 import utils.pgdata as pgdata
 import datetime as dt
+from matplotlib import pyplot as plt
+
 colorWindow = charts.colour_hex('dcr_blue')
+fmtt = '%Y-%m-%dT%H:%M:%S'
 
 def dailyHashrate():
-    data = dcrdata_api.hashrate()
-    utils.stats.windwoStats('Hashrate',cfg.pStart,cfg.pEnd,data,'rate','TH/s')
-    charts.dailyPlot(data=data,
-                     dataCol='rate',
+    data = pgdata.networkhashps()
+    data['networkhashps'] = data['networkhashps'] / 1000000000 # convert to TH/s
+    eMid = pd.to_datetime(dt.date(int(2023), int(8), int(1)), utc=True, format=fmtt, errors='ignore')
+    eEnd = pd.to_datetime(dt.date(int(2023), int(9), int(1)), utc=True, format=fmtt, errors='ignore')
+    utils.stats.windwoStats('networkhashps',cfg.pStart,cfg.pEnd,data,'networkhashps','GH/s')
+    ax, fig = charts.dailyPlot(data=data,
+                     dataCol='networkhashps',
                      cStart=cfg.cStart,
                      cEnd=cfg.cEnd,
-                     cTitle='Network - Hashrate (Th/s)',
+                     cTitle='Network - Hashrate (GH/s)',
                      fTitle='Network_Daily_Hashrate',
-                     yLabel='Hashrate (TH/s)',
-                     uLabel='TH/s',
+                     yLabel='Hashrate (GH/s)',
+                     uLabel='GH/s',
                      hStart=cfg.pStart,
                      hEnd=cfg.pEnd,
                      hColor=colorWindow,
@@ -28,6 +35,10 @@ def dailyHashrate():
                      ylim=[cfg.netHashLimMin,cfg.netHashLimMax],
                      annMid=True)
 
+    ax.axvspan(cfg.cStart, eEnd, color=charts.colour_hex('dcr_orange'), alpha=0.5)
+    ax.text(eMid, 10000,  'BLAKE-256 ASIC Mining', ha='center', va='center', fontsize=14,
+             fontweight='bold',color=charts.colour_hex('dcr_orange'))
+    chartUtils.saveFigure(fig,'Network_Daily_Hashrate', date=cfg.pStart)
 
 def dailyTxTfrValAdjNtv():
     data = cm.getMetric('dcr','TxTfrValAdjNtv',cfg.dStart,cfg.dEnd)

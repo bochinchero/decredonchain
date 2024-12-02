@@ -34,6 +34,8 @@ staking.dailyTicketsBought()
 staking.monthlyTicketsBought()
 staking.monthlyTicketsVoted()
 staking.revokeDistribution()
+staking.dailyTicketPoolSize()
+staking.dailyTicketPriceUSD()
 
 print('2')
 # network
@@ -69,7 +71,7 @@ privacy.dailyMixUnspentPC()
 privacy.dailyMixUnspentDCR()
 print('5')
 # pie charts
-#other.hashDist()
+other.hashDist()
 other.nodesDist()
 other.vspDist()
 other.revokedDist()

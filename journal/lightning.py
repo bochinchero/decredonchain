@@ -32,7 +32,7 @@ def dailyCapacity():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformat,
-                     ylim=[0, 300],
+                     ylim=[100, 300],
                      annMid=True)
 
 def dailyChannels():
@@ -52,7 +52,7 @@ def dailyChannels():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
-                     ylim=[0, 800],
+                     ylim=[200, 600],
                      annMid=True)
 
 def dailyNodes():
@@ -72,5 +72,5 @@ def dailyNodes():
                      dStart=cfg.dStart,
                      fmtAxis=charts.autoformatNoDec,
                      fmtAnn=charts.autoformatNoDec,
-                     ylim=[0, 300],
+                     ylim=[100, 300],
                      annMid=True)

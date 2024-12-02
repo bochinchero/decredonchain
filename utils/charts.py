@@ -10,6 +10,8 @@ from pathlib import Path
 import datetime as dt
 import utils.chartUtils as chartUtils
 import os
+import math
+from matplotlib.dates import MO, TU, WE, TH, FR, SA, SU
 
 def has_twin(ax):
     # this function checks if there is a twinax ni the figure, returns true or false
@@ -82,8 +84,8 @@ def fig(title,ylabel,ax=None,start=None,end=None,DJ=None):
     ax.grid(color=colour_hex('dcr_grey50'), linestyle='--', linewidth=0.5)
     xText = 0.99
     yText = -0.15
-    if DJ is None:
-        plt.text(xText, yText, 'Decred Journal', transform=ax.transAxes, ha='right')
+    #if DJ is None:
+        #plt.text(xText, yText, 'Decred Journal', transform=ax.transAxes, ha='right')
     return ax, fig
 
 
@@ -601,9 +603,32 @@ def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
     if dStart is None:
         dStart = cStart
     ax, xfig = fig(cTitle,yLabel, None, cStart, cEnd)
-    # charting
-    if bw is None:
-        bw = 15
+    ax.autoscale()
+    ax.yaxis.set_major_formatter(fmtAxis)
+    plt.setp(ax.xaxis.get_majorticklabels(), ha='center')
+    width = np.min(np.diff(mdates.date2num(data.index)))*0.75
+    # grab frequency
+    freq = pd.infer_freq(data.index)
+    print(freq)
+    match freq:
+        case 'MS':
+            ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+        case 'M':
+            ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+        case 'W-MON':
+            ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=MO, interval=2))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        case 'W':
+            ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=SU, interval=2))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        case 'D':
+            ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        case None:
+            ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     # create colormap and apply to the axis
     cmap = cmapCreate()
     theme = cmap
@@ -614,7 +639,7 @@ def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
         vals = data.iloc[:,[i]].squeeze()
         ax.bar(data.index,  # bar chart: pull out hte index on x
                vals,  # bar chart: pull out the txo_count for this iteration
-               width=bw,            # bar chart: bar width
+               width=width,
                label=labels[i],     # add bar label
                align='center',      # horizontal alignment
                bottom=v_offset)     # bar chart: vertical offset, calculated on each iteration on next line
@@ -623,8 +648,7 @@ def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
         else:
             v_offset += vals    # update offset for next bar
 
-    ax.yaxis.set_major_formatter(fmtAxis)
-    plt.setp(ax.xaxis.get_majorticklabels(), ha='center')
+
     # create total column
     data['totalsum'] = data.sum(axis=1)
     if annPos1 is not None:
@@ -633,17 +657,20 @@ def monthlyBarStacked(data,labels,cStart,cEnd,cTitle,fTitle,
         annotPos(data, 'totalsum', 2, ax, 'Up', annPos2, unitStr=uLabel, formatStr=fmtAnn)
     if annPos3 is not None:
         annotPos(data, 'totalsum', 3, ax, 'Up', annPos3, unitStr=uLabel, formatStr=fmtAnn)
-    #if hStart is None:
-    #    prevMax(data, 'totalsum', ax, dStart, cEnd, unitStr=uLabel, formatStr=fmtAnn)
-    #else:
-    #    prevMax(data, 'totalsum', ax, dStart, hStart, unitStr=uLabel, formatStr=fmtAnn)
-    ax.legend(loc='upper left')
+    ax.legend(loc='upper left', ncol=5)
     if ylim is not None:
         ax.set_ylim(ylim)
-    # set monthly locator
-    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
-    # set formatter
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    else:
+        # automatic limiting
+        maxY = v_offset.max() * 1.5
+        maxYd = int(math.log10(maxY)) + 1
+        limitYMax = round(maxY,-maxYd+2)
+
+    for index, value in v_offset.items():
+        ax.text(index,value + limitYMax*0.025, "{0:,.0f}".format(value), ha='center',va='center',size='x-small')
+
+    ax.set_ylim(0, limitYMax)
+    ax.margins(0.01)
     xfig.autofmt_xdate(rotation=45)
     plt.tight_layout(pad=1.5)
     saveFigure(xfig, fTitle, date=hStart)
@@ -675,8 +702,11 @@ def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
     # colormap stuff
     cmap = cmapCreate(inverse=True)
     theme = cmap
-    ax.set_prop_cycle("color", [theme(1. * i / (len(labels)-1))
-                                 for i in range(0, len(labels))])
+    if len(labels) > 1:
+        ax.set_prop_cycle("color", [theme(1. * i / (len(labels)-1))
+                                     for i in range(0, len(labels))])
+    else:
+        ax.set_prop_cycle("color", [theme(1)])
     # chart
     if hStart is not None and hEnd is not None:
         ax.axvspan(hStart, hEnd, color=hColor, alpha=0.25)
@@ -687,11 +717,6 @@ def stackedAreaPlot(data,labels,cStart,cEnd,cTitle,fTitle,
             chartUtils.annotFunc(data, 'total', fType='min', ax=ax, dateRange=[hStart, hEnd],
                                  pos='Up',dist=annMinPos, unitStr=uLabel, formatStr=fmtAnn)
 
-    # annotate previous ATH
-    # if hStart is None:
-    #    prevMax(data, dataCol, ax, dStart, cEnd, unitStr=uLabel,formatStr=fmtAnn)
-    # else:
-    #    prevMax(data, dataCol, ax, dStart, hStart, unitStr=uLabel,formatStr=fmtAnn)
     if fmtAxis is not None:
         ax.yaxis.set_major_formatter(fmtAxis)
     plt.stackplot(data.index, dataY, labels=labels)

@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import date
+import utils.snapcsv as snapcsv
 import os
 import numpy as np
 
@@ -97,3 +98,60 @@ def windwoStats(id,dStart,dEnd,rawData,col,unitStr,sumReq=None,ignoreATH=None,ra
         fDataNew = pd.concat([fData, sData], axis=0, ignore_index=True)
         # overwrite the file
         fDataNew.to_csv(fPath, mode='w', header=True,index=False)
+
+
+def vspWindowStats(startDate,endDate,fnoteList=None):
+    # this function grabs the snapshots from the start and end dates specified and generates
+    # the deltas for the voted/missed/revoked tickets, it also updates the
+    # get vsp data from start date
+    vspDataStart = snapcsv.vspDist(startDate)
+    # get vsp data from end date
+    vspDataEnd = snapcsv.vspDist(endDate)
+    # convert last updated to pd date time, tz aware
+    vspDataEnd['lastupdated'] = pd.to_datetime(vspDataEnd['lastupdated'], utc=True, errors='ignore')
+    # calculate days since last update
+    vspDataEnd['daysSinceUpdate'] = (endDate - vspDataEnd['lastupdated']).dt.days + 1
+    # day limit for still showing in chart - cutoff threshold
+    dayLimit = 7
+    if fnoteList is None:
+        # create footnote list
+        fnoteList = []
+    # update rows for VSPs that are only slightly out of date
+    for index, row in vspDataEnd.iterrows():
+        idStr = row['id']
+        # check if there are stale vsps below the cutoff threshold
+        if (row['daysSinceUpdate'] > 0):
+            lastUpdateStr = str(row['lastupdated'].date())
+            newStr = idStr  # create updated id string
+            fnoteCt = ''
+            for i in range(len(fnoteList) + 1):
+                fnoteCt = fnoteCt + ('*')
+            newStr = newStr + fnoteCt
+            if row['lastupdated'].date() < startDate.date():
+                vspDataEnd = vspDataEnd.drop(index)
+                vspDataStart = vspDataStart.drop(index)
+                fnoteStr = fnoteCt + idStr + ' removed due to stale data, last updated on ' + lastUpdateStr + "."
+            else:
+                vspDataEnd.at[index, 'id'] = newStr  # update id string in dataframe
+                vspDataStart.at[index, 'id'] = newStr  # update id string in dataframe
+                fnoteStr = fnoteCt + 'Incomplete data for ' + idStr + ', last update on ' + lastUpdateStr + '.'
+            fnoteList.append(fnoteStr)
+
+    # extract necessary data bits
+    vDataStart = vspDataStart[['id','voted', 'missed','expired','revoked']].copy().set_index('id')
+    vDataEnd = vspDataEnd[['id','voted', 'missed','expired','revoked']].copy().set_index('id')
+    # get difference between start/end dates
+    vspDiff = vDataEnd.subtract(vDataStart, fill_value=0).astype(int)
+    # remove rows for VSPs that have been removed since last snapshot
+    for index, row in vspDiff.iterrows():
+        idStr = index
+        # check if there are stale vsps below the cutoff threshold
+        if (row['missed'] < 0) or (row['voted'] < 0) or (row['expired'] < 0) or (row['revoked'] < 0):
+            newStr = idStr # create updated id string
+            fnoteCt = ''
+            for i in range(len(fnoteList)+1):
+                fnoteCt = fnoteCt+ ('*')
+            vspDiff = vspDiff.drop(index)
+            fnoteStr = fnoteCt + idStr + ' removed since last snapshot.'
+            fnoteList.append(fnoteStr)
+    return vspDiff,fnoteList

@@ -19,6 +19,8 @@ del rvBTC, supply
 #merge in
 data = data.merge(PriceBTC, left_on='date', right_on='date', how='left')
 data = data.merge(totsply, left_on='date', right_on='date', how='left')
+mask = (data.index < cfg.dyday)
+data = data.loc[mask]
 data = data.dropna()
 
 del totsply, PriceBTC
@@ -32,7 +34,8 @@ cols = ['CapRealBTC']
 data.loc[:,cols] = data.loc[:,cols].ffill()
 # calculate ratios
 data['SASRVRV'] = data['SASRV'] / data['CapRealBTC']
-
+data['adjRealx2'] = (data.CapRealBTC - data.SRV) * (data.totsply / data.poolval) * 2
+data['adjRealxH'] = (data.CapRealBTC - data.SRV) * (data.totsply / data.poolval) * 0.5
 
 # create first chart, long term view
 
@@ -106,3 +109,18 @@ stats.windwoStats('CapRealBTC',cfg.pStart,cfg.pEnd,data,'CapRealBTC','BTC')
 stats.windwoStats('SupplyAdjustedSRVBTC',cfg.pStart,cfg.pEnd,data,'SASRV','BTC')
 stats.windwoStats('StakedRealizedValBTC',cfg.pStart,cfg.pEnd,data,'SRV','BTC')
 stats.windwoStats('PriceBTC',cfg.pStart,cfg.pEnd,data,'PriceBTC','BTC',raw=True)
+
+
+fTitle = 'Decred Market Valuations (BTC)'
+ax4, xfig4 = charts.fig(fTitle, 'Capitalization (BTC)', None, cfg.dStart, cfg.dEnd, DJ=False)
+# plot price
+chartUtils.plot_primary(data['CapMarketBTC'], 'Market Value', 'dcr_black', ax4, 'log', 1,legloc='upper left')
+chartUtils.plot_primary(data['CapRealBTC'], 'Realized Value', 'dcr_green', ax4, 'log', 1,legloc='upper left')
+chartUtils.plot_primary(data['SASRV'], 'Supply Adjusted Staked Realized Value', 'dcr_blue', ax4, 'log', 1,legloc='upper left')
+chartUtils.plot_primary(data['adjRealx2'], 'Adj. Realized Value x2', 'dcr_orange', ax4, 'log', 1,legloc='upper left')
+chartUtils.plot_primary(data['adjRealxH'], 'Adj. Realized Value xh', 'dcr_orange50', ax4, 'log', 1,legloc='upper left')
+ax4.yaxis.set_major_formatter(charts.autoformatNoDec)
+ax4.legend(loc="upper left").set_zorder(100)
+# layout
+plt.tight_layout()
+plt.show()

@@ -4,6 +4,8 @@ import utils.dcrdata_api as dcrdata_api
 import pandas as pd
 import utils.stats
 import utils.pgdata as pgdata
+import utils.cm as cm
+
 colorWindow = charts.colour_hex('dcr_green')
 authString = 'Decred Journal - January 2023'
 
@@ -48,6 +50,29 @@ def dailyTicketPrice():
                      ylim=[cfg.stakeTpLimMin, cfg.stakeTpLimMax],
                               annMid=True)
 
+def dailyTicketPriceUSD():
+    data = dcrdata_api.ticketprice()
+    PriceUSD = cm.getMetric('dcr','PriceUSD',cfg.dStart,cfg.cEnd)
+    data = data.merge(PriceUSD, left_on='date', right_on='date', how='left')
+    data['ticketpriceUSD'] = data.ticketprice * data.PriceUSD
+    utils.stats.windwoStats('ticketpriceUSD',cfg.pStart,cfg.pEnd,data,'ticketprice','DCR')
+    ax,fig = charts.dailyPlot(data=data,
+                     dataCol='ticketpriceUSD',
+                     cStart=cfg.cStart,
+                     cEnd=cfg.cEnd,
+                     cTitle='Staking - Ticket Price (USD)',
+                     fTitle='Staking_Daily_TicketPrice_USD',
+                     yLabel='Ticket Price (USD)',
+                     uLabel='USD',
+                     hStart=cfg.pStart,
+                     hEnd=cfg.pEnd,
+                     hColor=colorWindow,
+                     dStart=cfg.dStart,
+                     fmtAxis=charts.autoformatNoDec,
+                     fmtAnn=charts.autoformat,
+                     ylim=[2000,10000],
+                              annMid=True)
+
 
 def dailyTicketPoolValue():
     data = dcrdata_api.ticketpoolval()
@@ -69,8 +94,31 @@ def dailyTicketPoolValue():
                      ylim=[cfg.stakePvLimMin,cfg.stakePvLimMax],
                      annMid=True)
 
+def dailyTicketPoolSize():
+    data = dcrdata_api.ticketpoolsize()
+    utils.stats.windwoStats('ticketpoolsize',cfg.pStart,cfg.pEnd,data,'count','tickets')
+    ax, fig = charts.dailyPlot(data=data,
+                     dataCol='count',
+                     cStart=cfg.cStart,
+                     cEnd=cfg.cEnd,
+                     cTitle='Staking - Ticket Pool Size',
+                     fTitle='Staking_Daily_TicketPoolSize',
+                     yLabel='Ticket Pool Size',
+                     uLabel='Tickets',
+                     hStart=cfg.pStart,
+                     hEnd=cfg.pEnd,
+                     hColor=colorWindow,
+                     dStart=cfg.dStart,
+                     fmtAxis=charts.autoformatNoDec,
+                     fmtAnn=charts.autoformatNoDec,
+                     ylim=[36000,46000],
+                     annMid=True)
+
+
 def dailyTicketsBought():
     data = pgdata.ticketVotes()
+    mask = (data.index < cfg.dyday)
+    data = data.loc[mask]
     utils.stats.windwoStats('tickets',cfg.pStart,cfg.pEnd,data,'tickets','tickets',sumReq=True)
     ax, fig = charts.dailyPlot(data=data,
                      dataCol='tickets',
@@ -114,6 +162,8 @@ def monthlyTicketsBought():
 
 def dailyTicketsVoted():
     data = pgdata.ticketVotes()
+    mask = (data.index < cfg.dyday)
+    data = data.loc[mask]
     utils.stats.windwoStats('votes',cfg.pStart,cfg.pEnd,data,'votes','votes',sumReq=True)
     ax, fig = charts.dailyPlot(data=data,
                      dataCol='votes',
@@ -151,12 +201,14 @@ def monthlyTicketsVoted():
                       dStart=cfg.dStart,
                       fmtAxis=charts.autoformatNoDec,
                       fmtAnn=charts.autoformatNoDec,
-                      ylim=[0, 2500],
+                      ylim=[0, 100000],
                       annPos1=3,
                       annPos2=1)
 
 def dailyTicketsMissed():
     data = pgdata.ticketVotes()
+    mask = (data.index < cfg.dyday)
+    data = data.loc[mask]
     utils.stats.windwoStats('votesMissed',cfg.pStart,cfg.pEnd,data,'missed','votes',sumReq=True)
     ax, fig = charts.dailyPlot(data=data,
                      dataCol='missed',
@@ -201,6 +253,8 @@ def monthlyTicketsMissed():
 
 def dailyTicketsExpired():
     data = pgdata.ticketVotes()
+    mask = (data.index < cfg.dyday)
+    data = data.loc[mask]
     utils.stats.windwoStats('ticketExpired',cfg.pStart,cfg.pEnd,data,'expired','tickets',sumReq=True)
     ax, fig = charts.dailyPlot(data=data,
                      dataCol='expired',
@@ -245,6 +299,8 @@ def monthlyTicketsExpired():
 
 def dailyTicketsRevoked():
     data = pgdata.ticketVotes()
+    mask = (data.index < cfg.dyday)
+    data = data.loc[mask]
     utils.stats.windwoStats('ticketsRevoked',cfg.pStart,cfg.pEnd,data,'revoked','tickets',sumReq=True)
     ax, fig = charts.dailyPlot(data=data,
                      dataCol='revoked',
@@ -267,7 +323,6 @@ def monthlyTicketsRevoked():
     # grab the missed votes from dcrdata
     data = pgdata.ticketVotes()
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'tickets': 'sum', 'revoked':'sum'})
-    print(dataM)
     dataM = dataM[dataM.index < cfg.pEnd]
     ax, fig = charts.monthlyBar(data=dataM,
                       dataCol='revoked',
@@ -304,3 +359,28 @@ def revokeDistribution():
     charts.donutChartL('Monthly Ticket Revocation Distribution', dataT, cfg.pEnd, sourceStr=blockStr,
                        authStr='Decred Journal'
                        , saveDate=cfg.pStart)
+
+
+def missRateDistribution():
+    # Calculate network data
+    # grab network data from pg
+    networkData = pgdata.ticketVotes()
+    # filter for the date range
+    mask = (networkData.index >= cfg.pStart) & (networkData.index < cfg.pEnd)
+    nDataM = networkData.loc[mask]
+    # drop tickets column
+    nDataM = nDataM.drop(columns=['tickets'])
+    # rename votes to voted
+    nDataM = nDataM.rename(columns={'votes':'voted'})
+    # sum all row values into a series
+    nDataMsum = nDataM.sum()
+    # calculate the miss rate
+    nDataM['missRatio'] = nDataM['missed'] / (nDataM['missed'] + nDataM['voted'])
+    # Calculate VSP data
+    vspDataM, fnoteList = utils.stats.vspWindowStats(cfg.pStart,cfg.pEnd)
+    vspDataMsum = vspDataM.sum()
+    # Calculate Solo data
+    soloDataM = (nDataMsum - vspDataMsum).astype(int)
+    print(soloDataM)
+    print(vspDataMsum)
+

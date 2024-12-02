@@ -36,8 +36,6 @@ def dailyHashrate():
                      annMid=True)
 
     ax.axvspan(cfg.cStart, eEnd, color=charts.colour_hex('dcr_orange'), alpha=0.5)
-    ax.text(eMid, 10000,  'BLAKE-256 ASIC Mining', ha='center', va='center', fontsize=14,
-             fontweight='bold',color=charts.colour_hex('dcr_orange'))
     chartUtils.saveFigure(fig,'Network_Daily_Hashrate', date=cfg.pStart)
 
 def dailyTxTfrValAdjNtv():
@@ -184,7 +182,7 @@ def monthlyfeesDCR():
     charts.monthlyBar(data=dataM,
                       dataCol='fees',
                       bColour='dcr_blue',
-                      cStart=cfg.dStartCSPP,
+                      cStart=cfg.dStart,
                       cEnd=cfg.pEnd,
                       cTitle='Network - Monthly Transaction Fees (DCR)',
                       fTitle='Network_Monthly_Fees_DCR',
@@ -247,7 +245,7 @@ def dailyBlockSize():
                      dataCol='size',
                      cStart=cfg.cStart,
                      cEnd=cfg.cEnd,
-                     cTitle='Network - Daily Combined Block Size',
+                     cTitle='Network - Daily Cumulative Block Size',
                      fTitle='Network_Daily_BlockSize',
                      yLabel='Block Size',
                      uLabel='MB',
@@ -293,7 +291,7 @@ def monthlyBlockSize():
                       bColour='dcr_blue',
                       cStart=cfg.dStart,
                       cEnd=cfg.pEnd,
-                      cTitle='Network - Monthly Combined Block Size',
+                      cTitle='Network - Monthly Cumulative Block Size',
                       fTitle='Network_Monthly_Blocksize',
                       yLabel='Block Size',
                       uLabel='MB',
@@ -374,33 +372,12 @@ def monthlyNewSupplyDist():
                       ylim=[0, 300000],
                       annPos1=4,
                       annPos2=3)
-
-def monthlyNewSupplyDistUSD():
-    data = pgdata.newSupplyDist()
-    utils.stats.windwoStats('issuancePoWUSD', cfg.pStart, cfg.pEnd, data, 'powUSD', 'USD', sumReq=True)
-    utils.stats.windwoStats('issuancePoSUSD', cfg.pStart, cfg.pEnd, data, 'posUSD', 'USD', sumReq=True)
-    utils.stats.windwoStats('issuanceTresUSD',cfg.pStart,cfg.pEnd,data,'tresUSD','USD',sumReq=True)
-    # filter data for the required month
-    mask = (data.index < cfg.pEnd)
-    dataMask = data.loc[mask]
-    # create label list for legend
-    labels = ['Miners', 'Stakers','Treasury']
-    dataM = dataMask.groupby(pd.Grouper(freq='MS')).agg({'powUSD': 'sum', 'posUSD': 'sum','tresUSD':'sum'})
-    charts.monthlyBarStacked(data=dataM,
-                             labels=labels,
-                             cStart=cfg.dStart,
-                             cEnd=cfg.cEnd,
-                             cTitle='Monthly New Issuance (USD)',
-                             fTitle='New_Issuance_USD',
-                             yLabel='Issuance (USD)',
-                             uLabel='USD',
-                             hStart=cfg.pStart,
-                             dStart=cfg.dStart,
-                             fmtAxis=charts.autoformatNoDec,
-                             fmtAnn=charts.autoformat,
-                             ylim=[0, 20000000],
-                             annPos1=4,
-                             annPos2=3)
+    data['totalDCR'] = data['powDCR'] + data['posDCR'] + data['tresDCR']
+    utils.stats.windwoStats('issuanceDCR', cfg.pStart, cfg.pEnd, data, 'totalDCR', 'dcr', sumReq=True)
+    sply = pgdata.supply()
+    data = data.merge(sply, left_on='date', right_on='date', how='left')
+    data['inflationRate'] = 100 * data['totalDCR'] / data['totsply']
+    utils.stats.windwoStats('inflationRate', cfg.pStart, cfg.pEnd, data, 'inflationRate', '%')
 
 
 def monthlyNewSupplyDistUSD():
@@ -426,9 +403,12 @@ def monthlyNewSupplyDistUSD():
                              dStart=cfg.dStart,
                              fmtAxis=charts.autoformatNoDec,
                              fmtAnn=charts.autoformat,
-                             ylim=[0, 25000000],
+                             ylim=[0, 30000000],
                              annPos1=4,
                              annPos2=3)
+    data['totalUSD'] = data['powUSD'] + data['posUSD'] + data['tresUSD']
+    utils.stats.windwoStats('issuanceUSD', cfg.pStart, cfg.pEnd, data, 'totalUSD', 'USD', sumReq=True)
+
 
 
 def NewSupplyDistDonut():
@@ -511,3 +491,4 @@ def dailyBlockVersion():
                            fmtAnn=charts.autoformatNoDec,
                            ylim=[0, 100],
                            disAnn=True)
+

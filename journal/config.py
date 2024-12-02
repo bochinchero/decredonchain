@@ -7,11 +7,13 @@ path = '$HOME/'
 fmtt = '%Y-%m-%dT%H:%M:%S'
 
 # evaluation period
-period_start = dt.date(int(2023),int(11),int(1))
-period_end   = dt.date(int(2023),int(12),int(1))
-previous_start = dt.date(int(2023),int(10),int(1))
-
+period_start = dt.date(int(2024),int(10),int(1))
+period_end   = dt.date(int(2024),int(10),int(31))
+previous_start = dt.date(int(2024),int(9),int(1))
+today = dt.date.today()
+yesterday = today - dt.timedelta(days=1)
 # declare offsets
+pdtd7 = pd.Timedelta(7, unit="d")
 pdtd14 = pd.Timedelta(14, unit="d")
 pdtd30 = pd.Timedelta(30, unit="d")
 pdtd90 = pd.Timedelta(30, unit="d")
@@ -24,7 +26,7 @@ dEnd = pd.to_datetime(dt.date.today() + dt.timedelta(days=60), utc=True, format=
 pStart = pd.to_datetime(period_start, utc=True, format=fmtt, errors='ignore')
 pEnd = pd.to_datetime(period_end, utc=True, format=fmtt, errors='ignore')
 pPrevStart = pd.to_datetime(previous_start, utc=True, format=fmtt, errors='ignore')
-
+dyday = pd.to_datetime(yesterday, utc=True, format=fmtt, errors='ignore')
 dCsvStart = pd.to_datetime(dt.date(int(2022),int(9),int(15)), utc=True, format=fmtt, errors='ignore')
 
 # chart start and end
@@ -85,8 +87,8 @@ csppMixDCRNax = 12000000
 csppMixDCRNin = 7000000
 
 # cspp mixed unspent supply DCR
-dexMonthlyVolDCRMax = 600000
+dexMonthlyVolDCRMax = 150000
 
 # cspp mixed unspent supply DCR
-dexMonthlyVolUSDMax = 70000000
+dexMonthlyVolUSDMax = 10000000
 

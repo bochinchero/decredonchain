@@ -96,7 +96,7 @@ def monthlyVolumeUSD():
     data = data.merge(PriceUSD, left_on='date', right_on='date', how='left')
     data['PrivacyVolUSD'] = data.PrivacyVol * data.PriceUSD
     data = data.drop(columns=['PrivacyVol', 'PriceUSD'])
-    utils.stats.windwoStats('PrivacyVolUSD',cfg.pStart,cfg.pEnd,data,'PrivacyVolUSD','USD')
+    utils.stats.windwoStats('PrivacyVolUSD',cfg.pStart,cfg.pEnd,data,'PrivacyVolUSD','USD',sumReq=True)
     dataM = data.groupby(pd.Grouper(freq='MS')).agg({'PrivacyVolUSD': 'sum'})
     dataM.drop(dataM.tail(1).index, inplace=True)
     charts.monthlyBar(data=dataM,

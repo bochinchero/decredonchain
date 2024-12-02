@@ -21,6 +21,9 @@ data = totsply.merge(SRV, left_on='date', right_on='date', how='left')
 data = data.merge(PriceUSD, left_on='date', right_on='date', how='left')
 data = data.fillna(0)
 data = data.merge(CapRealUSD, left_on='date', right_on='date', how='left')
+mask = (data.index < cfg.dyday)
+data = data.loc[mask]
+
 
 # calculate SASRV
 data['SASRV'] = data['SRV'] * data['totsply'] / data['poolval']
@@ -30,8 +33,8 @@ cols = ['CapRealUSD']
 data.loc[:,cols] = data.loc[:,cols].ffill()
 # calculate ratios
 data['SASRVRV'] = data['SASRV'] / data['CapRealUSD']
-
-
+data['adjRealx2'] = (data.CapRealUSD - data.SRV) * (data.totsply / data.poolval) * 2
+data['adjRealxH'] = (data.CapRealUSD - data.SRV) * (data.totsply / data.poolval)
 # create first chart, long term view
 
 # create figure
@@ -108,3 +111,18 @@ stats.windwoStats('CapMarketUSD',cfg.pStart,cfg.pEnd,data,'CapMarketUSD','USD')
 stats.windwoStats('CapRealUSD',cfg.pStart,cfg.pEnd,data,'CapRealUSD','USD')
 stats.windwoStats('SupplyAdjustedSRV',cfg.pStart,cfg.pEnd,data,'SASRV','USD')
 stats.windwoStats('StakedRealizedValUSD',cfg.pStart,cfg.pEnd,data,'SRV','USD')
+
+
+fTitle = 'Markets - Valuations (USD)'
+ax4, xfig4 = charts.fig(fTitle, 'Capitalization (USD)', None, cfg.dStart, cfg.dEnd, DJ=False)
+# plot price
+chartUtils.plot_primary(data['CapMarketUSD'], 'Market Value', 'dcr_black', ax4, 'log', 1,legloc='upper left')
+chartUtils.plot_primary(data['CapRealUSD'], 'Realized Value', 'dcr_green', ax4, 'log', 1,legloc='upper left')
+chartUtils.plot_primary(data['SASRV'], 'Supply Adjusted Staked Realized Value', 'dcr_blue', ax4, 'log', 1,legloc='upper left')
+chartUtils.plot_primary(data['adjRealx2'], 'Adj. Realized Value x2', 'dcr_orange', ax4, 'log', 1,legloc='upper left')
+chartUtils.plot_primary(data['adjRealxH'], 'Adj. Realized Value xh', 'dcr_orange50', ax4, 'log', 1,legloc='upper left')
+ax4.yaxis.set_major_formatter(charts.autoformatMillnoDec)
+ax4.legend(loc="upper left").set_zorder(100)
+# layout
+plt.tight_layout()
+plt.show()
